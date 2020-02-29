@@ -294,6 +294,5 @@ export default App;
 ```
 
 ---
----
-[Go to lesson 2](2) 
+[Go to lesson 2](lesson-2) 
 ---
