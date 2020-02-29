@@ -1,6 +1,6 @@
 # JavaScript Frameworks Module 3
 
-<h1>test</h1>
+<p>test</p>
 
 
 <a href="lesson-1">Lesson 1</a>
