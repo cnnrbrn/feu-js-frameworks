@@ -1,6 +1,7 @@
 # Lesson 1 - React fundamentals
 
 <h1>test</h1>
+
 We're going to use Create React App to create a new app. 
 
 In the folder you keep your other projects, run the following in your terminal or command line:
