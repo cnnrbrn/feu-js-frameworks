@@ -1,4 +1,3 @@
-# JavaScript Frameworks Module 3
 
 <p>test</p>
 
@@ -6,10 +5,4 @@
 <a href="lesson-1">Lesson 1</a>
 
 <a>blubba</a>
-
-- [Lesson 2](lesson-2)
-- [Lesson 3](lesson-3)
-- [Lesson 3](lesson-3)
-- [Module Assignment](ma)
-
 
