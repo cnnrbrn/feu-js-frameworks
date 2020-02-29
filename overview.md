@@ -1,8 +1,5 @@
 # JavaScript Frameworks
 
-<!-- <div class="menu-container"> -->
-- [Module 3](module-3/overview)
+<div class="menu">
 
-<!-- </div> -->
-
-<!-- [ddd](fff) -->
+</div>
