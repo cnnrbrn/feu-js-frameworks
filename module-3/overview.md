@@ -1,6 +1,6 @@
 # JavaScript Frameworks Module 3
 
-<div class="menu">
+<div class="menu" markdown="1">
 
 - [Lesson 1](lesson-1)
 - [Lesson 2](lesson-2)
