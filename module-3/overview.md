@@ -1,9 +1,11 @@
 # JavaScript Frameworks Module 3
 
-<ul class="menu">
-    <li><a href="lesson-1">Lesson 1</a></li>
-    <li><a href="lesson-2">Lesson 2</a></li>
-    <li><a href="lesson-3">Lesson 3</a></li>
-    <li><a href="lesson-4">Lesson 4</a></li>
-    <li><a href="ma">MA</a></li>
-</ul>
+<span class="menu">
+
+- [Lesson 1](lesson-1)
+- [Lesson 2](lesson-2)
+- [Lesson 3](lesson-3)
+- [Lesson 4](lesson-4)
+- [Module Assignment](ma)
+
+</span>
