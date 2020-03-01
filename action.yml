@@ -1,0 +1,4 @@
+name: "Send files to the index"
+runs:
+    using: "node12"
+    main: "index.js"

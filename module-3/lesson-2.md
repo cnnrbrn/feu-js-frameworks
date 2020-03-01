@@ -1,395 +1,372 @@
-# Lesson 2 - Making API calls
+# Lesson 2 - Bootstrap, routing and API calls
 
-## Asynchronous code
+The best thing about React components is that they are reusable. Once written, we can simply import them and use them. We can also import components written by other developers.
 
-So far all the code we've written has been executed or returned a value as soon as it's been encountered in the program.
+You used Bootstrap in an earlier course and we are going to use a library with React versions of the components - [React Bootstrap](https://react-bootstrap.github.io/).
 
-If you log a message
+From your terminal/command line, run:
 
 ```js
-console.log("I am the first log");
+npm i react-bootstrap
 ```
 
-the message is displayed as soon as the code is run.
+In the `public/index.html` add a link to the latest Boostrap CDN CSS file, just as you would for a non-React site.
 
-If you declare a function
+```html
+<link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+/>
+```
+
+The first component we want to use from React Bootstrap is the [Navbar](https://react-bootstrap.github.io/components/navbar/).
+
+You'll be used to seeing Bootstrap code examples as HTML tags with classes. In this library all the elements will be React components.
+
+Create a file in `components/layout` called `Layout.js`. We will be using the `Navbar` and `Nav` components, so import both of these in this file. (We always need React imported in our component files, but won't be inluding the import in examples from now on).
 
 ```js
-function logMessage() {
-    console.log("Function called");
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+```
+
+Create a function component called `Layout`, copy the example Navbar code from the document linked above and edit it as below:
+
+```js
+function Layout() {
+    return (
+        <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar.Brand href="#home">Rick and Morty</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="mr-auto">
+                    <Nav.Link href="#home">Home</Nav.Link>
+                    <Nav.Link href="#about">About</Nav.Link>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
+    );
+}
+
+export default Layout;
+```
+
+We're using the `Navbar`'s `bg` and `variant` props to change the style of the nav to a dark one. We've changed the brand name to "Rick and Morty" and added an `About` link.
+
+Import this new component in `App.js` and render it above the `<Heading>` component.
+
+```js
+return (
+    <div className="App">
+        <Layout />
+        <Heading title={title} />
+    </div>
+);
+```
+
+Our site now has a responsive nav bar.
+
+## Routing
+
+We have a link to an About page in our navigation, but no way to display that content.
+
+First lets add two components, Home and About.
+
+Create the following files: `src/components/home/Home.js` and `src/components/about/About.js`.
+
+Import the `Heading` component in both and export the following:
+
+`Home.js`
+
+```js
+export default function Home() {
+    return (
+        <>
+            <Heading title="Rick and Morty" />
+        </>
+    );
 }
 ```
 
-the function is run as soon as it's called:
+`About.js`
 
 ```js
-logMessage();
-// Function called
+export default function About() {
+    return (
+        <>
+            <Heading title="About this site" />
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </>
+    );
+}
 ```
 
-The following will be executed after the function has been called.
+Now we need something to navigate around the site. We are going to use [React Router](https://reacttraining.com/react-router/web/guides/quick-start).
 
 ```js
-console.log("I am the second log");
+npm i react-router-dom
 ```
 
-Running all the statements above will log:
+Now we can write code to navigate between these components.
+
+In `Layout.js` import the following:
 
 ```js
-// I am the first log
-// Function called
-// I am the second log
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    NavLink,
+} from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Home from "../home/Home";
+import About from "../about/About";
 ```
 
-The code is called statement by statement and each statement waits for the previous one to finish before running. This is called `synchronous` code.
+The imports from `react-router-dom` will provide the routing ability and the `Container` component from `react-bootstrap` will hold all of our site's content.
 
-<img src="/images/js1/synchronous-code.png" alt="synchronous code" style="max-width:500px">
+We need to edit what is returned from the `Layout` component again:
 
-That seems quite obvious, but sometimes it's not a good idea to wait for the previous statement to finish before executing the next one.
+```js
+return (
+    <Router>
+        <Navbar bg="dark" variant="dark" expand="lg">
+            <NavLink to="/" exact>
+                <Navbar.Brand>Rick and Morty</Navbar.Brand>
+            </NavLink>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="mr-auto">
+                    <NavLink to="/" exact className="nav-link">
+                        Home
+                    </NavLink>
+                    <NavLink to="/about/" className="nav-link">
+                        About
+                    </NavLink>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
+        <Container>
+            <Switch>
+                <Route path="/" exact component={Home} />
+                <Route path="/about" component={About} />
+            </Switch>
+        </Container>
+    </Router>
+);
+```
 
-If we made a call to a server and the user's internet connection was slow or the server was busy, waiting for the call to return before running the next code would create a poor user experience as the interface would appear unresponsive.
+We swapped out the `Nav.Link` Bootstrap components for `NavLink` components from React Router.
 
-`Asynchronous` code doesn't wait for the current statement to finish running before executing the next statement.
+We added a `Switch` to contain our `Routes`. Each `Route` points to a component we created above. The content that the `Routes` point to will be displayed inside the `Container`. We wrapped the `Navbar.Brand` in a `NavLink` that also points to the home page. Finally, everything we return is contained in a `Router` component.
 
-## Promises
+In the browser you will now be able to navigate between the Home and About components.
 
-`Promises` are a way to execute code `asynchronously`. When we call a promise our code doesn’t wait for a response, but moves on to the next line of code.
-
-<img src="/images/js1/promise-1.png" alt="promise" style="max-width:500px">
-
-<!-- They are objects we can use to handle the successful completion or failure of code that will finish running some time in the future. -->
-
-Once executed, the promise is `pending`. At some point it will return and will either have been `fulfilled` or `rejected`.
-
-<img src="/images/js1/promise-2.png" alt="promise" style="max-width:550px">
-
-<!-- 
-When we execute asynchronous code we can use a `Promise` to run a function when the code is successful and returns a value, or when the code is not successful and returns an error. -->
-
-Form [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise):
-
-> A Promise is in one of these states::
->
-> - `pending`: initial state, neither fulfilled nor rejected.
-> - `fulfilled`: meaning that the operation completed successfully.
-> - `rejected`: meaning that the operation failed.
-
-### Promise chaining
-
-Sometimes what is executed in our fulfilled function also returns a promise. This is called promise chaining.
-
-<img src="/images/js1/promise-chaining.png" alt="promise chaining" style="max-width:550px">
-
-`Fulfilled` states are handled by a `Promise`'s `then` method and `rejected` states are handled by a `catch` method.
-
-Both these methods take a function as an argument. This is where we can write code to handle the return value of the promise. 
-
-These functions in turn recieve an argument which is the return value of the promise (if successful and the promise has resolved) or the error from a rejected promise.
-
-<img src="/images/js1/promise-3.png" alt="promise" style="max-width:550px">
-
---- 
-
-Most of the time you won't write your own promises but will rather use libraries and other existing code built on promises.
-
-We aren't going to create any promises, but instead are going to use the promise-based `Fetch API` to make calls to the RAWG API and fetch data. The `Fetch API` is built in to most modern browsers.
-
-<a id="fetch"></a>
-
-## Fetch API
-
-Check out the [step-11](https://github.com/javascript-repositories/javascript-1-lesson-code/tree/step-11) branch from the [repo](https://github.com/javascript-repositories/javascript-1-lesson-code) to follow this lesson.
+We can delete the `Heading` component and `title` prop from `App.js`.
 
 ---
 
-In this branch the files in `js/data` have been removed, we've added some Boostrap JS files and `js/api.js`. The Bootstrap files are there to make the navbar responsive.
+## Practice
 
-```html
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<script src="js/script.js"></script>
-<script src="js/buttons.js"></script>
-<script src="js/api.js"></script>
-```
+Practise creating routes by building the following (we won't use your code going forward, this is only for practice):
 
-We are going to add the following in `js/api.js`.
-
-> We will often refer to API URLs as `endpoints`.
-
-The base URL for the API is `https://api.rawg.io/api/`. Let's keep that in a variable:
-
-```js
-const baseUrl = "https://api.rawg.io/api/";
-```
-
-To get a list of all the games from the API, the endpoint is `https://api.rawg.io/api/games`.
-
-Let's create another variable to store that:
-
-
-```js
-const gamesUrl = `${baseUrl}games`;
-```
-
-This could also be written using concatenation:
-
-```js
-const gamesUrl = baseUrl + "games";
-```
-
-`gamesUrl` is the endpoint we want to call using `fetch`.
-
-To use `fetch`, we pass a URL to the `fetch` method:
-
-```js
-fetch(gamesUrl);
-```
-
-Because `fetch` is built on promises, a successful call will be handled by a `then` method. The then method takes a function as an argument. This function in turn receives the response from the API call as an argument:
-
-```js
-fetch(gamesUrl)
-    .then(function(response) {
-        console.log(response);
-    });
-```
-
-Run the code and look at what gets logged as a response:
-
-```js
-const baseUrl = "https://api.rawg.io/api/";
-const gamesUrl = `${baseUrl}games`;
-
-fetch(gamesUrl)
-    .then(function(response) {
-        console.dir(response);
-    });
-```
-
-<img src="/images/js1/fetch-1.png" alt="fetch" style="max-width:400px">
-
-The `body` property holds the return value of the response. Click the three dots and you'll see it is a `ReadableStream`, a data `stream`. We can't work with this type of data directly, so we need to convert it to something we can work with.
-
-To convert the data stream to `JSON` we use the `json()` method. We'll call this method on the response and return the result from the function.
-
-```js
-return response.json();
-```
-
-The result of the  `json()` call is another promise, so we'll handle that with another `then` method. This is the `promise chaining` mentioned above.
-
-```js
-fetch(gamesUrl)
-    .then(function(response) {
-
-        return response.json();
-    })
-    .then(function(json) {
-
-        console.dir(json);
-    });
-```
-
-The function in the second `then` method receives a JSON object from the `reponse.json()` call. This is a data format we can with, it's a normal JavaScript object.
-
-The JSON objects returned from API calls will have different properties depending on the API. You'll always need to inspect the JSON to see which properties you can use. In our case the data we want are found on the `results` property, but the name of this property can vary according to the API.
-
-This object has several properties including the total number of games available - the `count` property - and a `results` property which is an array of objects.
-
-<img src="/images/js1/fetch-2.png" alt="fetch" style="max-width:500px">
-
-Even though the `count` property indicates there many thousands of games, the array of results has only 20 objects.
-
-This is because the results of the API call are `paginated` - split up into pages of results. Returning all the results at once would cause far too much data to be send to the browser, the JSON object would be huge and the browswer would likely crash. Browsers have a limit to the amount of JSON data they can handle.
-
-You can see the object has a `next` property which is the URL to get the second page of results.
-
-We will work only with the first page of results.
-
-#### catch
-
-Our `fetch` code is missing a `catch` method and we aren't handling errors properly.
-
-If the call returned an error from, for example, using an incorrect URL, we want to `catch` the error and something with it.
-
-In our case we will just log the error, but in a real-world environment you could handle the error by sending an email to a developer or logging it in error-tracking software.
-
-```js
-fetch(gamesUrl)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        console.dir(json);
-    })
-    .catch(function(error) {
-        console.dir(error);
-    });
-```
-
-You can test the `catch` method by using a broken URL in the call:
-
-```js
-fetch("this/will/not/work")
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        console.dir(json);
-    })
-    .catch(function(error) {
-        console.dir(error);
-    });
-```
-
-### Processing the results of an API call
-
-The second `then` method receives the results of the API call in JSON format.
-
-How do we display the results on the page?
-
-Back in `js/script.js`, the `switch` statement has been removed from the `loadGames` function and the code is set to loop through a `games` array.
-
-```js
-for (let i = 0; i < games.length; i++) 
-```
-
-This `games` array doesn't exist yet.
-
-Inside this function we want to loop through the results of the API call. We can do this by calling the `loadGames` function from the second `then` method of the `fetch` call and passing in the JSON object as an argument.
-
-First let's call the `loadGames` function from the second `then` in `js/api.js`:
-
-```js
-fetch(gamesUrl)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        // call the loadGames function and pass in the json object
-        loadGames(json);
-    })
-    .catch(function(error) {
-        console.dir(error);
-    });
-```
-
-Now that we're calling the function, an error will be displayed in the console - the code is trying to loop through `games` which doesn't exist.
-
-```js
-ReferenceError: games is not defined
-```
-
-First let's add an argument to the function that will receive the JSON object from the `then` method. Like all arguments we can call it anything, but `json` makes sense:
-
-```js
-function loadGames(json) {
-    // function code here
-```
-
-If we log `json` here we will get the same object displayed when we logged it in the second `then` method - it's the same object, we've just passed it from the `fetch`'s `then` method into the function:
-
-```js
-function loadGames(json) {
-    console.dir(json);
-    // rest of function code here
-```
-
-<img src="/images/js1/fetch-2.png" alt="fetch" style="max-width:500px">
-
-We still don't have the `games` variable.
-
-We know the data we want is on the property of the `json` object called `results`.
-
-Let's declare a variable called `games` and set it equal to `json.results`.
-
-```js
-function loadGames(json) {
-
-    console.dir(json);
-    const games = json.results;
-    // rest of function code here
-```
-
-Now, rather than looping through hard-coded arrays of objects, the results of the API call are being displayed.
-
-Let's display a loading indicator until the API call returns and the results are displayed.
-
-To do this we can simply place a `div` with a class of `loader` inside the results div; the CSS has been supplied:
-
-```html
-<div class="row results">
-    <div class="loader"></div>
-</div>
-```
-
-This div will be replaced by the HTML that gets created in the `loadGames` function.
-
-If your connection is very fast and the call returns before you see the loader, you can mimic a slow connection from the `network` tab in dev tools. Select a preset from the dropdown menu. `Online` is the default value.
-
-<img src="/images/js1/network-tab.png" alt="fetch" style="max-width:200px">
-
---- 
-
-The [step-12](https://github.com/javascript-repositories/javascript-1-lesson-code/tree/step-12) branch from the [repo](https://github.com/javascript-repositories/javascript-1-lesson-code) contains all the code so far.
+-   Create a `Contact` component at `src/components/contact/Contact.js`
+-   Import it in `Layout.js`, create a `NavLink` pointing `to` "/contact" and a `Route` with a path of "/contact" and a component of `Contact`.
 
 ---
 
-The API call is currently fetching games of any genre.
+## Constants
 
-In the [next lesson](3) we'll fetch games by genre.
+It's always a good idea to store strings that you will reuse as constants.
 
----
+Create `src/constants/API.js` and add the base URL we will use for the API calls.
 
-## Practice question
-
-> The answer can be found [here](https://github.com/javascript-repositories/js1-lesson-answers/tree/module-3-lesson-2).
->
-> There are two versions of the answer, in `js/script.js` and `js/script2.js`. 
-
-<h5 class="question">Question</h5>
-
-The endpoint below will return an array of screenshots from the game `Rocket League`.
-
-```
-https://api.rawg.io/api/games/4003/screenshots
+```js
+export const BASE_URL = "https://rickandmortyapi.com/api/character/";
 ```
 
-Call the endpoint and loop through the results to create a image slider using the HTML below. 
+## The first API call
 
-The supplied code will create the slider for you, you just need to create the HTML that is commented out in a loop.
+We could make the API call using either a class component or the newer way with hooks. We're going to use hooks.
 
-The first item needs to have a class of `active` added to it otherwise the slider will not display.
+Create `src/components/characters/list/CharacterList.js`.
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Lesson 2 | Module 3 | JavaScript 1</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
-    </head>
-    <body>
-        <div class="carousel slide" data-ride="carousel" data-interval="3000" data-pause="false">
-            <div class="carousel-inner">
-                <!-- <div class="carousel-item active">
-                    <img class="d-block w-100" src="..." />
-				</div>
-				<div class="carousel-item">
-                    <img class="d-block w-100" src="..." />
-                </div>
-				-->
-            </div>
-        </div>
-        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-        <script src="js/script.js"></script>
-    </body>
-</html>
+`useState` and `useEffect` are the first hooks we'll use, so we need to import them from React. Also import the API URL.
+
+```js
+import React, { useState, useEffect } from "react";
+import { BASE_URL } from "../../../constants/API";
 ```
 
----
-- [Go to lesson 3](3) 
----
+Add the following code:
+
+```js
+export default function CharacterList() {
+    useEffect(function() {
+        fetch(BASE_URL)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                console.log(json);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }, []);
+
+    return null;
+}
+```
+
+We're going to rewrite the hook using fat arrow functions but you can use whichever syntax your prefer:
+
+```js
+useEffect(() => {
+    fetch(BASE_URL)
+        .then(response => response.json())
+        .then(json => console.log(json))
+        .catch(error => console.log(error));
+}, []);
+```
+
+The `useEffect` hook allows us to perform "side effects" like API calls in our function component. If you are familiar with class components, useEffect is similar to componentDidMount and componentDidUpdate. `useEffect` runs after every time the component renders, both the first time and after every update. The empty array `[]` as the second argument passed to `useEffect` tell React to run it only after the first render.
+
+In the `home/Home.js` component, import `CharacterList` and render it beneath the heading:
+
+```js
+import CharacterList from "../characters/list/CharacterList";
+
+export default function Home() {
+    return (
+        <>
+            <Heading title="Rick and Morty" />
+            <CharacterList />
+        </>
+    );
+}
+```
+
+If you look in the console, the call returns a json object with an array of character objects on a property called `results`. We need to store that array in a state property on our component so that we can loop through it in our return statement.
+
+Add a `useState` hook above the `useEffect`:
+
+```js
+const [characters, setCharacters] = useState([]);
+```
+
+This gives us access to a property called `characters` and a method called `setCharacters` we can use to set that property. The empty array `[]` is the initial value for `characters`.
+
+Change the second `then` method to use the `setCharacters` method:
+
+```js
+.then(json => setCharacters(json.results))
+```
+
+Loop through `characters` in the return:
+
+```js
+return (
+    <ul>
+        {characters.map(c => (
+            <li key={c.id}>{c.name}</li>
+        ))}
+    </ul>
+);
+```
+
+We are using the `map` method to return an array of `li` tags. The `key` attribute is important; you can remove it to see the warning ESLint will display about it being missing.
+
+Full code:
+
+```js
+export default function CharacterList() {
+    const [characters, setCharacters] = useState([]);
+
+    useEffect(() => {
+        fetch(BASE_URL)
+            .then(response => response.json())
+            .then(json => setCharacters(json.results))
+            .catch(error => console.log(error));
+    }, []);
+
+    return (
+        <ul>
+            {characters.map(c => (
+                <li key={c.id}>{c.name}</li>
+            ))}
+        </ul>
+    );
+}
+```
+
+Our home page now displays the first 20 names of the characters returned from the API. Because this call is paginated, we will only ever retrieve the first 20 items. We won't cover paginated calls in this guide.
+
+### Improving the UI
+
+Let's add a loading spinner while the API call runs. `react-bootstrap` provides one for us:
+
+```js
+import Spinner from "react-bootstrap/Spinner";
+```
+
+Add a second `useState` hook:
+
+```js
+const [loading, setLoading] = useState(true);
+```
+
+This gives us a `loading` property and a `setLoading` method to set that property. We're giving `loading` a default property of `true`.
+
+In the `useEffect` hook, add a finally method to set loading to `false`.
+
+```js
+.finally(() => setLoading(false));
+```
+
+This will run whether the call succeeds or fails - either way, loading is done.
+
+Above the first return statement, add a second that checks if the `loading` property is true and if so returns the `Spinner` component.
+
+```js
+if (loading) {
+    return <Spinner animation="border" className="spinner" />;
+}
+```
+
+You can find the props you can use to change the `Spinner`'s appearance in the [libary's docs](https://react-bootstrap.github.io/components/spinners/).
+
+If `loading` is not true, the `Spinner` won't return and our original return will run.
+
+Full code:
+
+```js
+import React, { useState, useEffect } from "react";
+import Spinner from "react-bootstrap/Spinner";
+import { BASE_URL } from "../../../constants/API";
+
+export default function CharacterList() {
+    const [characters, setCharacters] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch(BASE_URL)
+            .then(response => response.json())
+            .then(json => setCharacters(json.results))
+            .catch(error => console.log(error))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return <Spinner animation="border" className="spinner" />;
+    }
+
+    return (
+        <ul>
+            {characters.map(c => (
+                <li key={c.id}>{c.name}</li>
+            ))}
+        </ul>
+    );
+}
+```

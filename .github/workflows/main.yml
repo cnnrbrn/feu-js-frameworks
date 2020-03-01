@@ -1,0 +1,32 @@
+name: send files to search
+
+on:
+    push:
+        paths:
+            - "**.md"
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - id: file_changes
+              uses: trilom/file-changes-action@v1
+              with:
+                  githubToken: ${{ secrets.GITHUB_TOKEN }}
+            # - name: print files
+            #   run: |
+            #       ls $HOME
+            #       cat $HOME/files.json
+            #       cat $HOME/files_modified.json
+            #       cat $HOME/files_added.json
+            #       cat $HOME/files_deleted.json
+            #       echo '${{ steps.file_changes.outputs.files_modified}}'
+            #       echo '${{ steps.file_changes.outputs.files_added}}'
+            #       echo '${{ steps.file_changes.outputs.files_deleted}}'
+            - name: do file stuff
+              uses: ./ # Uses an action in the root directory
+              with:
+                  new-files: ${{ steps.file_changes.outputs.files_added }}
+                  updated-files: ${{ steps.file_changes.outputs.files_modified }}
+                  deleted-files: ${{ steps.file_changes.outputs.files_deleted }}
