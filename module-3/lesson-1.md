@@ -45,7 +45,7 @@ function App() {
 
 Hit save and check your browser. The page will automatically reload when you make changes to the code so you won't need to refresh your browser to see the changes.
 
-### How it works
+### How it workss
 
 Inside `src/index.js` the `App` component is imported and rendered to a DOM element with the id of root.
 

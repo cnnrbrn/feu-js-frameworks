@@ -71,7 +71,7 @@ Our site now has a responsive nav bar.
 We have a link to an About page in our navigation, but no way to display that content.
 
 First lets add two components, Home and About.
-
+ 
 Create the following files: `src/components/home/Home.js` and `src/components/about/About.js`.
 
 Import the `Heading` component in both and export the following:

@@ -1,6 +1,6 @@
 # Lesson 1 
 
-This lesson contains a quick note on CORS and then introduces basic form validation.
+This lesson  contains a quick note on CORS and then introduces basic form validation.
 
 The rest of the lessons in this module won't introduce any new concepts.
 
