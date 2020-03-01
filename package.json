@@ -1,18 +1,17 @@
 {
-    "name": "feu-js-frameworks",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC",
-    "keywords": [],
-    "dependencies": {
-      "@actions/core": "^1.2.2",
-      "@actions/github": "^2.1.1",
-      "algoliasearch": "^4.0.3"
-    }
+  "name": "feu-js-frameworks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": [],
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.1",
+    "algoliasearch": "^4.0.3"
   }
-  
+}
