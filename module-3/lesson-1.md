@@ -2,7 +2,7 @@
 
 We're going to use Create React App to create a new app. 
 
-> **[From the official docs:](https://create-react-app.dev/docs/getting-started/#quick-start)** If you've previously installed `create-react-app` globally via `npm install -g create-react-app`, we recommend you uninstall the package using `npm uninstall -g create-react-app` to ensure that npx always uses the latest version.
+> *[From the official docs:](https://create-react-app.dev/docs/getting-started/#quick-start)* If you've previously installed `create-react-app` globally via `npm install -g create-react-app`, we recommend you uninstall the package using `npm uninstall -g create-react-app` to ensure that npx always uses the latest version.
 
 In the folder you keep your other projects, run the following in your terminal or command line:
 
