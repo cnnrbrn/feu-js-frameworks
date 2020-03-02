@@ -32,7 +32,7 @@ try {
 	filesToUpdate.forEach(file => {
 		// console.log("file", file)
 
-		if (file.includes(".md") && !file.includes("README.md") &&  !file.includes("index.md") && !file.includes("overview.md") && !file.includes("ma.md") && !file.includes("ca.md")) {
+		if (file.includes(".md") && !file.includes("README.md") && !file.includes("LICENCE.md") &&  !file.includes("index.md") && !file.includes("overview.md") && !file.includes("ma.md") && !file.includes("ca.md")) {
 			const path = file.replace(".md", "")
 			const objectID = section + path
 

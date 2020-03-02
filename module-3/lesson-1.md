@@ -1,8 +1,8 @@
 # Lesson 1 - React fundamentals
 
-<h1>test</h1>
-
 We're going to use Create React App to create a new app. 
+
+> [**From the official docs:**](https://create-react-app.dev/docs/getting-started/#quick-start) If you've previously installed `create-react-app` globally via `npm install -g create-react-app`, we recommend you uninstall the package using `npm uninstall -g create-react-app` to ensure that npx always uses the latest version.
 
 In the folder you keep your other projects, run the following in your terminal or command line:
 
@@ -27,7 +27,7 @@ This will start your app at [http://localhost:3000](http://localhost:3000) (or a
 
 Open the project in your editor and the above link in your browser.
 
-`create-react app` has installed a whole bunch of packages and created our first component called `App` in the `src` directory. All the code we will write will go in the `src` directory.
+`create-react-app` has installed a whole of packages (in the `node_modules` folder) and created our first component called `App` in the `src` directory. All the code we will write will go in the `src` directory.
 
 Open `src/App.js`. This is our first component. It's a function called `App` and it will render on the page whatever we return from it.
 
