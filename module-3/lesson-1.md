@@ -27,7 +27,7 @@ This will start your app at [http://localhost:3000](http://localhost:3000) (or a
 
 Open the project in your editor and the above link in your browser.
 
-`create-react-app` has installed a whole of packages (in the `node_modules` folder) and created our first component called `App` in the `src` directory. All the code we will write will go in the `src` directory.
+`create-react-app` has installed a whole lot of packages (in the `node_modules` folder) and created our first component called `App` in the `src` directory. All the code we will write will go in the `src` directory.
 
 Open `src/App.js`. This is our first component. It's a function called `App` and it will render on the page whatever we return from it.
 
@@ -43,7 +43,7 @@ function App() {
 }
 ```
 
-Hit save and check your browser. The page will automatically reload when you make changes to the code so you won't need to refresh your browser to see the changes.
+Hit save and check your browser. The page will automatically reload when you make changes to the code.
 
 ### How it workss
 
