@@ -61,7 +61,7 @@ This DOM element is found in `public/index.html`.
 
 `App` will be our parent component and all our other components will live inside it in a tree structure.
 
-![App Structure](/images/1-app-structure.png)
+![App Structure](/images/app-structure.png)
 
 ### ESlint
 
