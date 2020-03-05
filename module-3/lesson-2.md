@@ -1,372 +1,437 @@
-# Lesson 2 - Bootstrap, routing and API calls
+# React 1 Lesson 2 - Components
 
-The best thing about React components is that they are reusable. Once written, we can simply import them and use them. We can also import components written by other developers.
+React is concerned with building user interfaces - that is its primary function. Other functionality such as forms and data management is added to projects through 3rd party libraries.
 
-You used Bootstrap in an earlier course and we are going to use a library with React versions of the components - [React Bootstrap](https://react-bootstrap.github.io/).
+React creates user interfaces through components.
 
-From your terminal/command line, run:
+There are two kinds of React components: function components and class components. 
+
+Using function components is currently the preferred way of building components and this is the way we will use components in the lessons.
+
+---
+
+## Creating a component
+
+`create-react-app` generated a function component for us, `App`. Let's create our own one.
+
+Arranging components sensibly is very important.
+
+We will only keep one component in a file and we'll try to keep each component small. Building and maintaining big components quickly becomes difficult.
+
+One of the main reasons that frameworks like React, Angular and Vue have become so popular is that they allow developers to organise code in small, easy-to-maintain files.
+
+In the `src` directory, create a new folder called `components`. All our components will go in sub-folders in this directory. In the `components` folder, create a sub-folder called `layout`, and inside this folder create a file called `Heading.js`.
+
+
+<img src="/images/js-frameworks/react-first-component.png" alt="Heading component" style="max-width: 315px" />
+
+> Note: All React components must start with a capital letter.
+> 
+> As a rule, we'll name our components with a capital letter first, and every other folder and file using <a href="https://techterms.com/definition/camelcase" target="_blank">camelCase<a/>.
+
+
+Inside `src/components/layout/Heading.js`, enter the following code:
 
 ```js
-npm i react-bootstrap
+import React from "react";
+
+function Heading() {
+	return <h1>Noroff React</h1>;
+}
+
+export default Heading;
 ```
 
-In the `public/index.html` add a link to the latest Boostrap CDN CSS file, just as you would for a non-React site.
+In the code above, we
+
+- import React from the `react` package
+- create a function called `Heading` - the name must begin with a capital letter
+- return an `h1` tag with the value of `Noroff React` from the function
+- and finally export the `Heading` function so that we can import it in other files
+
+Wel'll now import and use it in the `App` component.
+
+In `src/App.js`, import the Heading component from it's folder:
+
+```js
+import React from "react";
+import logo from "./logo.svg";
+import Heading from "./components/layout/Heading";
+import "./sass/style.scss";
+```
+
+To render a component inside another component, we use its name inside angle brackets:
 
 ```html
-<link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-/>
+<Heading></Heading>
 ```
 
-The first component we want to use from React Bootstrap is the [Navbar](https://react-bootstrap.github.io/components/navbar/).
+Because there is nothing between the two component tags, we can use the shorthand version:
 
-You'll be used to seeing Bootstrap code examples as HTML tags with classes. In this library all the elements will be React components.
-
-Create a file in `components/layout` called `Layout.js`. We will be using the `Navbar` and `Nav` components, so import both of these in this file. (We always need React imported in our component files, but won't be inluding the import in examples from now on).
-
-```js
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
+```html
+<Heading />
 ```
 
-Create a function component called `Layout`, copy the example Navbar code from the document linked above and edit it as below:
+In the return statement of the App component, remove everything between `<div className="App">` and its closing tag and insert the `<Heading />` component.
 
 ```js
-function Layout() {
-    return (
-        <Navbar bg="dark" variant="dark" expand="lg">
-            <Navbar.Brand href="#home">Rick and Morty</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mr-auto">
-                    <Nav.Link href="#home">Home</Nav.Link>
-                    <Nav.Link href="#about">About</Nav.Link>
-                </Nav>
-            </Navbar.Collapse>
-        </Navbar>
+function App() {
+	return (
+		<div className="App">
+			<Heading />
+		</div>
+	);
+}
+```
+
+If you check your browser, the `<h1>` tag with the value `Noroff React` will be displayed on the page.
+
+<img src="/images/js-frameworks/react-h1.png" alt="Heading" style="max-width: 333px" />
+
+> #### Another ESlint note
+>
+> Because we deleted those lines of code above, you should see a warning in your console about unused code:
+>
+> ```html
+> 'logo' is defined but never used
+> ```
+>
+> This is a warning and not an error, so it won't break your app, but it's good practice to keep your code warning-free. Delete the line that imports the logo and the warning will go away.
+>
+> ```js
+> import logo from "./logo.svg";
+> ```
+
+Back in `src/components/layout/Heading.js`, let's move the value between the `h1` tags to a variable:
+
+```js
+import React from "react";
+
+function Heading() {
+
+    const title = "Noroff React heading as a variable";
+
+	return <h1>{title}</h1>;
+}
+
+export default Heading;
+```
+
+Above, we've created the varible `title` and assigned it a value.
+
+Then we've rendered the contents of the variable inside the JSX by placing it between curly braces `{}`.
+
+Any time you want to output variables or loop through variables inside JSX, you place the code inside curly braces.
+
+> Remember to watch the browser for changes as you save your code.
+
+
+
+Let's add another variable and output it:
+
+```js
+import React from "react";
+
+function Heading() {
+    const title = "Noroff React heading as a variable";
+	const subtitle = "This is the subtitle";
+
+	return (
+		<div>
+			<h1>{title}</h1>
+			<h2>{subtitle}</h2>
+		</div>
+	);
+}
+
+export default Heading;
+
+```
+
+Above we've added a second variable called `subtitle` and are outputting it between `h2` tags.
+
+Because a component can only return one parent element, we have wrapped both the `h1` and the `h2` elements in a `div`.
+
+This means there will be an extra `div` in the HTML output on the page. To avoid this extra element we can use `fragments`.
+
+Fragments look like empty tags: <></>
+
+```js
+return (
+    <>
+        <h1>{title}</h1>
+        <h2>{subtitle}</h2>
+    </>
+);
+```
+
+More on fragments <a href="https://interactive-content.now.sh/react/components/fragments">here</a>.
+
+
+## props
+
+There isn't a lot of point assiging the values to variables and then rendering them inside curly braces like we are currently doing in the `Heading` component, and the component will always return the same value inside its JSX.
+
+Most of the time you want to pass in variables to components and have them render what you pass in.
+
+This is where `props` come in.
+
+In `src/App.js`, change 
+
+```jsx
+<Heading />
+```
+
+to 
+
+```jsx
+<Heading title="Title from prop"/>
+```
+
+We've added a prop(erty) called `title` with a value of `Title from prop`.
+
+The `title` prop will now be available in the `Heading` component.
+
+`props` is an objected called `props` that is available to each component.
+
+In `src/components/layout/Heading.js`, update the code to this:
+
+```js
+import React from "react";
+
+function Heading(props) {
+	const subtitle = "This is the subtitle";
+
+	console.log(props);
+
+	return (
+		<>
+			<h1>{props.title}</h1>
+			<h2>{subtitle}</h2>
+		</>
+	);
+}
+
+export default Heading;
+```
+
+We added `props` inside the function brackets so that we can use the `props` object inside the function.
+
+When you console log `props` you can see it is an object and has one property called `title`:
+
+```js
+{title: "Title from prop"}
+```
+
+This is what we are passing in when call the component from `src/App.js`.
+
+We can then use `props.title` inside the `h1` tags instead of the local variable we had before.
+
+Let's do this for `subtitle` too. 
+
+We'll add the prop in `App.js`
+
+```jsx
+<Heading title="Title from prop" subtitle="Subtitle from prop" />
+```
+
+And use it in `Heading.js`:
+
+```js
+function Heading(props) {
+	return (
+		<>
+			<h1>{props.title}</h1>
+			<h2>{props.subtitle}</h2>
+		</>
+	);
+}
+```
+
+Change the values of the of the values you pass in as the props in `App.js` and you will see the browser update the new values displayed.
+
+### destructuring props
+
+We can use object destructuring to access the prop values and avoid having to repeatedly use the `props` keyword.
+
+The `Heading` component updated to use destructuring would look like this:
+
+```js
+import React from "react";
+
+function Heading({ title, subtitle }) {
+	return (
+		<>
+			<h1>{title}</h1>
+			<h2>{subtitle}</h2>
+		</>
+	);
+}
+
+export default Heading;
+
+```
+
+We place the variables we are looking to use inside curly braces and then we can use them directly without needing to use `props`.
+
+
+
+## props.children
+
+If you pass a value inside the opening and closing tags of a component, the value will be available as a proprty called `children`.
+
+To demonstrate this, we'll create another component called `Paragraph`. 
+
+Create the following file: `src/components/layout/Paragraph.js`.
+
+Inside place the following:
+
+```js
+import React from "react";
+
+function Paragraph(props) {
+	return (
+        <p>{props.children}</p>
+    );
+}
+
+export default Paragraph;
+```
+
+Or using destructurin:
+
+```js
+import React from "react";
+
+function Paragraph({ children }) {
+	return (
+        <p>{children}</p>
+    );
+}
+
+export default Paragraph;
+```
+
+This component will render whatever we pass in between its opening and closing tags.
+
+In `src/App.js`, import the component and then use it inside the return statement:
+
+
+```js
+import React from "react";
+import Heading from "./components/layout/Heading";
+import Paragraph from "./components/layout/Paragraph";
+import "./sass/style.scss";
+
+function App() {
+	return (
+		<div className="App">
+			<Heading title="Title from prop" subtitle="Subtitle from prop" />
+
+			<Paragraph>
+				This will be the children prop inside the component.
+			</Paragraph>
+		</div>
+	);
+}
+
+export default App;
+```
+
+The value `This will be the children prop inside the component.` will be rendered wherever `props.children` is placed inside the component.
+
+### Components as children
+
+Let's add a `Layout` component and pass in the other components as its children.
+
+Create the following file: `src/components/layout/Layout.js`.
+
+Add the following inside:
+
+```js
+import React from "react";
+
+function Layout({ children }) {
+	return (
+        <div className="layout">
+            {children}
+        </div>
     );
 }
 
 export default Layout;
 ```
 
-We're using the `Navbar`'s `bg` and `variant` props to change the style of the nav to a dark one. We've changed the brand name to "Rick and Morty" and added an `About` link.
+We'll also add some styles for the `.layout` class in `src/sass/partials/style.scss`:
 
-Import this new component in `App.js` and render it above the `<Heading>` component.
+```scss
+@import "partials/_variables";
 
-```js
-return (
-    <div className="App">
-        <Layout />
-        <Heading title={title} />
-    </div>
-);
-```
-
-Our site now has a responsive nav bar.
-
-## Routing
-
-We have a link to an About page in our navigation, but no way to display that content.
-
-First lets add two components, Home and About.
- 
-Create the following files: `src/components/home/Home.js` and `src/components/about/About.js`.
-
-Import the `Heading` component in both and export the following:
-
-`Home.js`
-
-```js
-export default function Home() {
-    return (
-        <>
-            <Heading title="Rick and Morty" />
-        </>
-    );
+.layout {
+	width: 100%;
+	max-width: 800px;
+	padding: 30px;
+	background: #ebebeb;
+	margin: 0 auto;
 }
 ```
 
-`About.js`
+Finally, in `src/App.js` import the `Layout` component and wrap the other components in this component:
 
 ```js
-export default function About() {
-    return (
-        <>
-            <Heading title="About this site" />
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-        </>
-    );
+import React from "react";
+import Heading from "./components/layout/Heading";
+import Paragraph from "./components/layout/Paragraph";
+import Layout from "./components/layout/Layout";
+import "./sass/style.scss";
+
+function App() {
+	return (
+		<Layout>
+			<Heading title="Title from prop" subtitle="Subtitle from prop" />
+
+			<Paragraph>This will be the children prop inside the component.</Paragraph>
+		</Layout>
+	);
 }
+
+export default App;
 ```
 
-Now we need something to navigate around the site. We are going to use [React Router](https://reacttraining.com/react-router/web/guides/quick-start).
 
-```js
-npm i react-router-dom
-```
-
-Now we can write code to navigate between these components.
-
-In `Layout.js` import the following:
-
-```js
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    NavLink,
-} from "react-router-dom";
-import Container from "react-bootstrap/Container";
-import Home from "../home/Home";
-import About from "../about/About";
-```
-
-The imports from `react-router-dom` will provide the routing ability and the `Container` component from `react-bootstrap` will hold all of our site's content.
-
-We need to edit what is returned from the `Layout` component again:
-
-```js
-return (
-    <Router>
-        <Navbar bg="dark" variant="dark" expand="lg">
-            <NavLink to="/" exact>
-                <Navbar.Brand>Rick and Morty</Navbar.Brand>
-            </NavLink>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mr-auto">
-                    <NavLink to="/" exact className="nav-link">
-                        Home
-                    </NavLink>
-                    <NavLink to="/about/" className="nav-link">
-                        About
-                    </NavLink>
-                </Nav>
-            </Navbar.Collapse>
-        </Navbar>
-        <Container>
-            <Switch>
-                <Route path="/" exact component={Home} />
-                <Route path="/about" component={About} />
-            </Switch>
-        </Container>
-    </Router>
-);
-```
-
-We swapped out the `Nav.Link` Bootstrap components for `NavLink` components from React Router.
-
-We added a `Switch` to contain our `Routes`. Each `Route` points to a component we created above. The content that the `Routes` point to will be displayed inside the `Container`. We wrapped the `Navbar.Brand` in a `NavLink` that also points to the home page. Finally, everything we return is contained in a `Router` component.
-
-In the browser you will now be able to navigate between the Home and About components.
-
-We can delete the `Heading` component and `title` prop from `App.js`.
-
----
+<!-- ---
 
 ## Practice
 
-Practise creating routes by building the following (we won't use your code going forward, this is only for practice):
+Practise creating components by building the following (we won't use your code going forward, this is only for practice):
 
--   Create a `Contact` component at `src/components/contact/Contact.js`
--   Import it in `Layout.js`, create a `NavLink` pointing `to` "/contact" and a `Route` with a path of "/contact" and a component of `Contact`.
+-   A `Subheading` component that receives a `title` prop and renders the prop's value inside an `h2` tag
+-   A `Paragraph` component that receives a `text` prop and renders it inside a `p` element
+-   A `Button` component that receives a `label` prop and renders it inside a `button` element
+-
 
----
-
-## Constants
-
-It's always a good idea to store strings that you will reuse as constants.
-
-Create `src/constants/API.js` and add the base URL we will use for the API calls.
+Create them in separate files inside the layout folder. Import and render them in `App.js`.
 
 ```js
-export const BASE_URL = "https://rickandmortyapi.com/api/character/";
-```
+import React from "react";
+import Heading from "./components/layout/Heading";
+import Subheading from "./components/layout/Subheading";
+import Paragraph from "./components/layout/Paragraph";
+import Button from "./components/layout/Button";
+import "./App.css";
 
-## The first API call
-
-We could make the API call using either a class component or the newer way with hooks. We're going to use hooks.
-
-Create `src/components/characters/list/CharacterList.js`.
-
-`useState` and `useEffect` are the first hooks we'll use, so we need to import them from React. Also import the API URL.
-
-```js
-import React, { useState, useEffect } from "react";
-import { BASE_URL } from "../../../constants/API";
-```
-
-Add the following code:
-
-```js
-export default function CharacterList() {
-    useEffect(function() {
-        fetch(BASE_URL)
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(json) {
-                console.log(json);
-            })
-            .catch(function(error) {
-                console.log(error);
-            });
-    }, []);
-
-    return null;
-}
-```
-
-We're going to rewrite the hook using fat arrow functions but you can use whichever syntax your prefer:
-
-```js
-useEffect(() => {
-    fetch(BASE_URL)
-        .then(response => response.json())
-        .then(json => console.log(json))
-        .catch(error => console.log(error));
-}, []);
-```
-
-The `useEffect` hook allows us to perform "side effects" like API calls in our function component. If you are familiar with class components, useEffect is similar to componentDidMount and componentDidUpdate. `useEffect` runs after every time the component renders, both the first time and after every update. The empty array `[]` as the second argument passed to `useEffect` tell React to run it only after the first render.
-
-In the `home/Home.js` component, import `CharacterList` and render it beneath the heading:
-
-```js
-import CharacterList from "../characters/list/CharacterList";
-
-export default function Home() {
-    return (
-        <>
-            <Heading title="Rick and Morty" />
-            <CharacterList />
-        </>
-    );
-}
-```
-
-If you look in the console, the call returns a json object with an array of character objects on a property called `results`. We need to store that array in a state property on our component so that we can loop through it in our return statement.
-
-Add a `useState` hook above the `useEffect`:
-
-```js
-const [characters, setCharacters] = useState([]);
-```
-
-This gives us access to a property called `characters` and a method called `setCharacters` we can use to set that property. The empty array `[]` is the initial value for `characters`.
-
-Change the second `then` method to use the `setCharacters` method:
-
-```js
-.then(json => setCharacters(json.results))
-```
-
-Loop through `characters` in the return:
-
-```js
-return (
-    <ul>
-        {characters.map(c => (
-            <li key={c.id}>{c.name}</li>
-        ))}
-    </ul>
-);
-```
-
-We are using the `map` method to return an array of `li` tags. The `key` attribute is important; you can remove it to see the warning ESLint will display about it being missing.
-
-Full code:
-
-```js
-export default function CharacterList() {
-    const [characters, setCharacters] = useState([]);
-
-    useEffect(() => {
-        fetch(BASE_URL)
-            .then(response => response.json())
-            .then(json => setCharacters(json.results))
-            .catch(error => console.log(error));
-    }, []);
+function App() {
+    const title = "Noroff React";
 
     return (
-        <ul>
-            {characters.map(c => (
-                <li key={c.id}>{c.name}</li>
-            ))}
-        </ul>
+        <div className="App">
+            <Heading title={title} />
+            <Subheading title="This is a sub-heading" />
+            <Paragraph text="This is a paragraph" />
+            <Button label="This is a button" />
+        </div>
     );
 }
-```
 
-Our home page now displays the first 20 names of the characters returned from the API. Because this call is paginated, we will only ever retrieve the first 20 items. We won't cover paginated calls in this guide.
-
-### Improving the UI
-
-Let's add a loading spinner while the API call runs. `react-bootstrap` provides one for us:
-
-```js
-import Spinner from "react-bootstrap/Spinner";
-```
-
-Add a second `useState` hook:
-
-```js
-const [loading, setLoading] = useState(true);
-```
-
-This gives us a `loading` property and a `setLoading` method to set that property. We're giving `loading` a default property of `true`.
-
-In the `useEffect` hook, add a finally method to set loading to `false`.
-
-```js
-.finally(() => setLoading(false));
-```
-
-This will run whether the call succeeds or fails - either way, loading is done.
-
-Above the first return statement, add a second that checks if the `loading` property is true and if so returns the `Spinner` component.
-
-```js
-if (loading) {
-    return <Spinner animation="border" className="spinner" />;
-}
-```
-
-You can find the props you can use to change the `Spinner`'s appearance in the [libary's docs](https://react-bootstrap.github.io/components/spinners/).
-
-If `loading` is not true, the `Spinner` won't return and our original return will run.
-
-Full code:
-
-```js
-import React, { useState, useEffect } from "react";
-import Spinner from "react-bootstrap/Spinner";
-import { BASE_URL } from "../../../constants/API";
-
-export default function CharacterList() {
-    const [characters, setCharacters] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch(BASE_URL)
-            .then(response => response.json())
-            .then(json => setCharacters(json.results))
-            .catch(error => console.log(error))
-            .finally(() => setLoading(false));
-    }, []);
-
-    if (loading) {
-        return <Spinner animation="border" className="spinner" />;
-    }
-
-    return (
-        <ul>
-            {characters.map(c => (
-                <li key={c.id}>{c.name}</li>
-            ))}
-        </ul>
-    );
-}
-```
+export default App;
+``` -->
