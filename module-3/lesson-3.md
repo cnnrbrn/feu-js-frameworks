@@ -1,508 +1,237 @@
-# Lesson 3 - Class components
+# React 1 Lesson 3 - Bootstrap and routing
 
-Time to add a card for each item.
+The best thing about React components is that they are reusable. Once written, we can simply import them and use them. We can also import components written by other developers.
 
-Add the following file and CSS to it: `src/components/characters/list/CharacterList.css`
+You used Bootstrap in an earlier course and we are going to use a library with React versions of the components - [React Bootstrap](https://react-bootstrap.github.io/).
 
-```css
-.card {
-    margin-bottom: 30px;
-    box-shadow: 0px 3px 16px #ccc;
-    transition: all 0.4s;
-}
-
-.card:hover {
-    box-shadow: 0 0 0 #ccc;
-}
-
-.card-title.h5 {
-    font-size: 1em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.search {
-    margin: 2em 0;
-}
-
-.clear-search {
-    margin-bottom: 30px;
-}
-
-.clear-search__button {
-    margin-left: 10px;
-}
-```
-
-And import it in the `CharacterList` component.
+From your terminal/command line, run:
 
 ```js
-import "./CharacterList.css";
+npm i react-bootstrap
 ```
 
-We are going to create a new component for our card code. Add the following file and code to it: `src/components/characters/list/CharacterItem.js`
+In the `public/index.html` add a link to the latest Boostrap CDN CSS file, just as you would for a non-React site.
 
-```js
-import PropTypes from "prop-types";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import "./CharacterList.css";
-
-function CharacterItem({ id, name, image }) {
-    return (
-        <Card>
-            <Card.Img variant="top" src={image} />
-            <Card.Body>
-                <Card.Title>{name}</Card.Title>
-                <Button variant="secondary" block>
-                    View
-                </Button>
-            </Card.Body>
-        </Card>
-    );
-}
-
-CharacterItem.propTypes = {
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-};
-
-export default CharacterItem;
+```html
+<link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+/>
 ```
 
-We are destructuring each property from the `props` object so that we can use them directly. We also added a `propTypes` object for design-time prop type checking. We aren't using the `id` prop just yet.
+The first component we want to use from React Bootstrap is the [Navbar](https://react-bootstrap.github.io/components/navbar/).
 
-Finally, we are making use of the `Card` and `Button` components from `react-bootstrap`.
+You'll be used to seeing Bootstrap code examples as HTML elements with classes. In this library all the elements will be React components.
 
-Back in the `CharacterList` component, add the following imports:
+First we'll use the `Navbar` and `Nav` components.
 
-```js
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import CharacterItem from "./CharacterItem";
-```
-
-And change the return code to:
-
-```js
-return (
-    <Row>
-        {characters.map(character => {
-            const { id, name, image } = character;
-
-            return (
-                <Col sm={6} md={3} key={id}>
-                    <CharacterItem id={id} name={name} image={image} />
-                </Col>
-            );
-        })}
-    </Row>
-);
-```
-
-We're destructuring the properties from each `character` object, then sending them as props in to the `CharacterItem` component.
-
-We've wrapped all the components in a `Row` and each `CharacterItem` in a `Col`. You could move the `Col` in to the `CharacterItem` if that made more sense to you.
-
-## Linking to the detail page
-
-When we click the "View" button we want to go to the detail page. We'll use `react-router-dom` for this.
-
-Import `withRouter` from the libary:
-
-```js
-import { withRouter } from "react-router-dom";
-```
-
-`withRouter` is a [Higher Order Component](https://reactjs.org/docs/higher-order-components.html). A higher-order component is a function that takes a component and returns a new component.
-
-We'll pass our `CharacterItem` into this function which will return another component with a `history` object on it that we can use to programmatically navigate.
-
-```js
-export default withRouter(CharacterItem);
-```
-
-Now we can get the `history` object from the props and add an inline function to the click event of the button to navigate to the detail page and add the id to the path.
-
-Full code:
-
-```js
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import "./CharacterList.css";
-
-function CharacterItem({ id, name, image, history }) {
-    return (
-        <Card>
-            <Card.Img variant="top" src={image} />
-            <Card.Body>
-                <Card.Title>{name}</Card.Title>
-                <Button
-                    variant="secondary"
-                    block
-                    onClick={() => history.push(`/character/${id}`)}
-                >
-                    View
-                </Button>
-            </Card.Body>
-        </Card>
-    );
-}
-
-CharacterItem.propTypes = {
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    image: PropTypes.string.isRequired,
-    history: PropTypes.object.isRequired,
-};
-
-export default withRouter(CharacterItem);
-```
-
-## The detail components
-
-We're going to add a `CharacterDetailContainer` component at: `src/components/characters/detail/CharacterDetailContainer`.
-
-This time we will use a `class` component.
-
-```js
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Spinner from "react-bootstrap/Spinner";
-import { BASE_URL } from "../../../constants/API";
-import "./CharacterDetail.css";
-
-export default class CharacterDetailContainer extends Component {
-    state = {
-        details: null,
-        loading: true,
-    };
-
-    componentDidMount() {
-        // the API call will happen here
-    }
-
-    render() {
-        const { loading, details } = this.state;
-
-        if (loading || !details) {
-            return <Spinner animation="border" className="spinner" />;
-        }
-
-        return null;
-    }
-}
-```
-
-Back in `Layout.js` we need to add this component to our routes:
-
-```js
-import CharacterDetailContainer from "../characters/detail/CharacterDetailContainer";
-```
-
-```js
-<Switch>
-    <Route path="/" exact component={Home} />
-    <Route path="/about" component={About} />
-    <Route path="/character/:id" component={CharacterDetailContainer} />
-</Switch>
-```
-
-We have added the `id` parameter to the route. That is passed in `CharacterItem`'s click event:
-
-```js
-onClick={() => history.push(`/character/${id}`)}
-```
-
-Now if we click on a card's button we will see the loading spinner return from the `CharacterDetailContainer`.
-
-Back in `CharacterDetailContainer` let's make the API call. We'll use the `params` object on the `match` prop to get the `id` from the url.
-
-First we add the propType checks (this is where we can add them on a class) and then do the API call in componentDidMount. When the call is complete we set the `state.details` property to the return value and set `state.loading` to false:
-
-```js
-static propTypes = {
-    match: PropTypes.object.isRequired,
-}
-
-state = {
-    details: null,
-    loading: true,
-}
-
-componentDidMount() {
-    // get the id from the URL
-    const { id } = this.props.match.params
-    //create the URL string
-    const url = `${BASE_URL}/${id}`
-
-    fetch(url)
-        .then(response => response.json())
-        .then(json => {
-            this.setState({
-                details: json,
-                loading: false
-            })
-        })
-        .catch(error => {
-            console.log(error)
-
-            this.setState({
-                loading: false
-            })
-        });
-}
-```
-
-We could also use an `async-await` call here:
-
-```js
-async componentDidMount() {
-    const { id } = this.props.match.params
-    const url = `${BASE_URL}/${id}`
-
-    try{
-        const response = await fetch(url);
-        const json = await response.json();
-
-        this.setState({
-            details: json,
-            loading: false
-        })
-    }
-    catch(error) {
-        console.log(error)
-        this.setState({
-            loading: false
-        })
-    }
-}
-```
-
-Now we can display the character's details:
-
-```js
-return <div>{details.name}</div>;
-```
-
-Full code so far:
-
-```js
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Spinner from "react-bootstrap/Spinner";
-import { BASE_URL } from "../../../constants/API";
-import "./CharacterDetail.css";
-
-export default class CharacterDetail extends Component {
-    static propTypes = {
-        match: PropTypes.object.isRequired,
-    };
-
-    state = {
-        details: null,
-        loading: true,
-    };
-
-    async componentDidMount() {
-        const { id } = this.props.match.params;
-        const url = `${BASE_URL}/${id}`;
-
-        try {
-            const response = await fetch(url);
-            const json = await response.json();
-
-            this.setState({
-                details: json,
-                loading: false,
-            });
-        } catch (error) {
-            this.setState({
-                loading: false,
-            });
-        }
-    }
-
-    render() {
-        const { loading, details } = this.state;
-
-        if (loading || !details) {
-            return <Spinner animation="border" className="spinner" />;
-        }
-
-        return <div>{details.name}</div>;
-    }
-}
-```
-
-We'll add a new component to display the image and details.
-
-Add the following file and CSS to it: `src/components/characters/detail/CharacterDetail.css`
-
-```css
-.detail-image {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
-}
-
-.character-breadcrumb .breadcrumb {
-    background-color: transparent;
-    margin-bottom: 40px;
-    border-bottom: 1px solid #ddd;
-    border-radius: 0;
-}
-
-.character-breadcrumb a {
-    color: #333333;
-    font-weight: bold;
-}
-
-.character-breadcrumb a::before {
-    content: "<<";
-    margin-right: 7px;
-}
-```
-
-Then create `src/components/characters/detail/CharacterDetail.js` with the following code:
-
-```js
-import PropTypes from "prop-types";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Image from "react-bootstrap/Image";
-import "./CharacterDetail.css";
-
-export default function CharacterDetail({ details }) {
-    const { name, image, gender, species, status, episode, location } = details;
-
-    return (
-        <Row>
-            <Col md={6} className="detail-image">
-                <Image src={image} roundedCircle />
-            </Col>
-            <Col>
-                <h1>{name}</h1>
-            </Col>
-        </Row>
-    );
-}
-
-CharacterDetail.propTypes = {
-    details: PropTypes.object.isRequired,
-};
-```
-
-We're receiving one object prop called `details` from the calling component and using more `react-bootstrap` components.
-
-Now we can import and call this from `CharacterDetailContainer`:
-
-```js
-import CharacterDetail from "./CharacterDetail";
-```
-
-```js
-return <CharacterDetail details={details} />;
-```
-
-Finally in this section we are going add one more component that will render a list of character details.
-
-Create the following: file `src/characters/detail/DetailList.js` and the code:
-
-```js
-import PropTypes from "prop-types";
-import ListGroup from "react-bootstrap/ListGroup";
-
-export default function DetailList({
-    gender,
-    species,
-    status,
-    episodes,
-    location,
-}) {
-    const numberOfEpisodes = episodes.length;
-
-    const { name: locationName } = location;
-
-    return (
-        <ListGroup>
-            <ListGroup.Item>
-                <b>Gender</b>: {gender}
-            </ListGroup.Item>
-            <ListGroup.Item>
-                <b>Species</b>: {species}
-            </ListGroup.Item>
-            <ListGroup.Item>
-                <b>Status</b>: {status}
-            </ListGroup.Item>
-            <ListGroup.Item>
-                <b>Episodes</b>: {numberOfEpisodes}
-            </ListGroup.Item>
-            <ListGroup.Item>
-                <b>Location</b>: {locationName}
-            </ListGroup.Item>
-        </ListGroup>
-    );
-}
-
-DetailList.propTypes = {
-    gender: PropTypes.string.isRequired,
-    species: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
-    episodes: PropTypes.array.isRequired,
-    location: PropTypes.object.isRequired,
-};
-```
-
-Two things to note here are that `episodes` is an array and we want to only display the number of episodes; and we are destructuring the `name` property from the `location` object and giving it an alias of `locationName`.
-
-We can now import the `DetailList` component in `CharacterDetail` and pass the props in. Final code for `CharacterDetail`:
+In `src/components/layout/Layout.js` import both of these:
 
 ```js
 import React from "react";
-import PropTypes from "prop-types";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Image from "react-bootstrap/Image";
-import DetailList from "./DetailList";
-import "./CharacterDetail.css";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+```
 
-export default function CharacterDetail({ details }) {
-    const { name, image, gender, species, status, episode, location } = details;
+Replace the Layout function with the code below:
 
+```jsx
+function Layout() {
     return (
-        <Row>
-            <Col md={6} className="detail-image">
-                <Image src={image} roundedCircle />
-            </Col>
-            <Col>
-                <h1>{name}</h1>
-                <DetailList
-                    gender={gender}
-                    species={species}
-                    status={status}
-                    episodes={episode}
-                    location={location}
-                />
-            </Col>
-        </Row>
+        <Navbar bg="dark" variant="dark" expand="lg">
+            <Navbar.Brand href="/">Rick and Morty</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <Nav className="mr-auto">
+                    <Nav.Link href="/">Home</Nav.Link>
+                    <Nav.Link href="/about/">About</Nav.Link>
+                    <Nav.Link href="/contact/">Contact</Nav.Link>
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
     );
 }
 
-CharacterDetail.propTypes = {
-    details: PropTypes.object.isRequired,
-};
+export default Layout;
 ```
+
+We're using the `Navbar`'s `bg` and `variant` props to change the style of the nav to a dark one. We've changed the brand name to "Rick and Morty" and added `About` and `Contact` links.
+
+Our site now has a responsive nav bar.
+
+## Routing
+
+We have a link to an About page and a Contact page in our navigation, but no way to display that content.
+
+We will create components to display content on each of those pages, but first let's edit the `Heading` component and remove the `h2` element so that we can use just its `h1` element in the other components.
+
+```js
+import React from "react";
+
+function Heading({ title }) {
+	return (
+		<h1>{title}</h1>
+	);
+}
+
+export default Heading;
+
+```
+
+Now lets add three new components, `Home`, `About` and `Contact`.
+ 
+Create the following files:
+
+- `src/components/home/Home.js`
+- `src/components/about/About.js`
+- `src/components/contact/Contact.js`
+
+Import the `Heading` component in each and set a title value for the prop in each.
+
+`src/components/home/Home.js`:
+
+```jsx
+import React from 'react';
+import Heading from "../layout/Heading";
+
+export function Home() {
+    return (
+        <Heading title="Home" />
+    );
+}
+
+export default Home;
+```
+
+`src/components/about/About.js`:
+
+```jsx
+import React from 'react';
+import Heading from "../layout/Heading";
+
+export function About() {
+    return (
+        <>
+            <Heading title="About" />
+            <p>This is the about page</p>
+        </>
+    );
+}
+
+export default About;
+```
+
+`src/components/contact/Contact.js`:
+
+```jsx
+import React from 'react';
+import Heading from "../layout/Heading";
+
+export function Contact() {
+    return (
+        <Heading title="Contact" />
+    );
+}
+
+export default Contact;
+```
+
+Now we need something to navigate around the site. We are going to use [React Router](https://reacttraining.com/react-router/web/guides/quick-start).
+
+```js
+npm i react-router-dom
+```
+
+Now we can write code to navigate between these components.
+
+In `Layout.js`, we need to add more imports and again edit what is returned:
+
+```jsx
+import React from 'react'
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    NavLink,
+} from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Home from "../home/Home";
+import About from "../about/About";
+import Contact from "../contact/Contact";
+
+function Layout() {
+    return (
+        <Router>
+            <Navbar bg="dark" variant="dark" expand="lg">
+                <NavLink to="/" exact>
+                    <Navbar.Brand>Rick and Morty</Navbar.Brand>
+                </NavLink>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                        <NavLink to="/" exact className="nav-link">
+                            Home
+                        </NavLink>
+                        <NavLink to="/about" className="nav-link">
+                            About
+                        </NavLink>
+                        <NavLink to="/contact" className="nav-link">
+                            Contact
+                        </NavLink>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+            <Container>
+                <Switch>
+                    <Route path="/" exact component={Home} />
+                    <Route path="/about" component={About} />
+                    <Route path="/contact" component={Contact} />
+                </Switch>
+            </Container>
+        </Router>
+    );
+}
+
+export default Layout;
+```
+
+Apart from the new imports, we swapped out the `Nav.Link` Bootstrap components for `NavLink` components from React Router.
+
+We added a `Switch` to contain our `Routes`. Each `Route` points to a component we created above. The content that the `Routes` point to will be displayed inside the `Container`. We wrapped the `Navbar.Brand` in a `NavLink` that also points to the home page. The `/` path is the home page. Finally, everything we return is contained in a `Router` component.
+
+In the browser you will now be able to navigate between the Home, About and Contact components. Note that navigating between "pages" doesn't cause the browser to reload.
+
+
+The code added so far can be found on [this branch](https://github.com/javascript-repositories/react-module-1-code/tree/step-4) of the [repo](https://github.com/javascript-repositories/react-module-1-code).
+
 
 ---
 
 ## Practice
 
--   Add more details from the API call to the `DetailList` component.
--   Create an `ErrorAlert` component which takes a single `message` prop. In `CharacterDetailContainer` check for the presence of an `error` property on the json result. If it exists display the `ErrorAlert` rather than the `CharacterDetail`. A missing or badly formed `id` in the URL will return an error.
+Create the following files:
+
+- `src/components/slider/SliderContainer.js`
+- `src/components/slider/Slider.js`
+
+Create a component called `Slider` in `Slider.js`.
+
+Using the React Bootstrap [carousel component](https://react-bootstrap.github.io/components/carousel/), create a carousel (image slider) with 3 slides. Use images from a free source like <a href="https://unsplash.com/" target="_blank">Unsplash</a>.
+
+The component should receive 3 props that are used as the values inside the `h3` tags in each carousel item's label and image alt attribute.
+
+In `SliderContainer.js` import the `Slider` component and pass in three props for the captions. You can call the props `label1`, `label2` and `label3`.
+
+In `Layout.js`, import `SliderContainer`, create a `NavLink` pointing `to` "/slider" and a `Route` with a path of "/slider" and a component of `SliderContainer`.
+
+--- 
+
+Example code for this can be found on [this branch](https://github.com/javascript-repositories/react-module-1-code/tree/step-5) of the [repo](https://github.com/javascript-repositories/react-module-1-code).
+
+---
+
+[Go to lesson 4](4)
 
 ---

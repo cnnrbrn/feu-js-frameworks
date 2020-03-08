@@ -16,9 +16,7 @@ Using function components is currently the preferred way of building components 
 
 Arranging components sensibly is very important.
 
-We will only keep one component in a file and we'll try to keep each component small. Building and maintaining big components quickly becomes difficult.
-
-One of the main reasons that frameworks like React, Angular and Vue have become so popular is that they allow developers to organise code in small, easy-to-maintain files.
+We will only keep one component in a file and we'll try to keep each component small. Building and maintaining big components quickly becomes difficult. One of the main reasons that frameworks like React, Angular and Vue have become so popular is that they allow developers to organise code in small, easy-to-maintain files.
 
 In the `src` directory, create a new folder called `components`. All our components will go in sub-folders in this directory. In the `components` folder, create a sub-folder called `layout`, and inside this folder create a file called `Heading.js`.
 
@@ -26,8 +24,8 @@ In the `src` directory, create a new folder called `components`. All our compone
 <img src="/images/js-frameworks/react-first-component.png" alt="Heading component" style="max-width: 315px" />
 
 > Note: All React components must start with a capital letter.
-> 
-> As a rule, we'll name our components with a capital letter first, and every other folder and file using <a href="https://techterms.com/definition/camelcase" target="_blank">camelCase<a/>.
+>
+> As a rule, we'll name our components with a capital letter first, and every other folder and file using <a href="https://techterms.com/definition/camelcase" target="_blank">camelCase</a>.
 
 
 Inside `src/components/layout/Heading.js`, enter the following code:
@@ -45,7 +43,7 @@ export default Heading;
 In the code above, we
 
 - import React from the `react` package
-- create a function called `Heading` - the name must begin with a capital letter
+- create a function called `Heading`
 - return an `h1` tag with the value of `Noroff React` from the function
 - and finally export the `Heading` function so that we can import it in other files
 
@@ -84,6 +82,26 @@ function App() {
 }
 ```
 
+The complete code for `src/App.js` will look like this now:
+
+```js
+import React from "react";
+import logo from "./logo.svg";
+import Heading from "./components/layout/Heading";
+import "./sass/style.scss";
+
+function App() {
+	return (
+		<div className="App">
+			<Heading />
+		</div>
+	);
+}
+
+export default App;
+
+```
+
 If you check your browser, the `<h1>` tag with the value `Noroff React` will be displayed on the page.
 
 <img src="/images/js-frameworks/react-h1.png" alt="Heading" style="max-width: 333px" />
@@ -117,7 +135,7 @@ function Heading() {
 export default Heading;
 ```
 
-Above, we've created the varible `title` and assigned it a value.
+Above, we've created the variable `title` and assigned it a value.
 
 Then we've rendered the contents of the variable inside the JSX by placing it between curly braces `{}`.
 
@@ -170,7 +188,7 @@ More on fragments <a href="https://interactive-content.now.sh/react/components/f
 
 ## props
 
-There isn't a lot of point assiging the values to variables and then rendering them inside curly braces like we are currently doing in the `Heading` component, and the component will always return the same value inside its JSX.
+There isn't a lot of point assigning the values to variables and then rendering them inside curly braces like we are currently doing in the `Heading` component as the component will always return the same value inside its JSX.
 
 Most of the time you want to pass in variables to components and have them render what you pass in.
 
@@ -190,9 +208,13 @@ to
 
 We've added a prop(erty) called `title` with a value of `Title from prop`.
 
-The `title` prop will now be available in the `Heading` component.
+This is how data gets passed into components and the `title` prop will now be available in the `Heading` component.
 
-`props` is an objected called `props` that is available to each component.
+When passing data into a component, props resemble attributes on HTML tags except we decide what to call them and what kind of value they can hold.
+
+Like any other variable, you should give the props you create sensible names.
+
+In the component receiving the props, `props` is an object with properties matching those that are passed in.
 
 In `src/components/layout/Heading.js`, update the code to this:
 
@@ -223,7 +245,7 @@ When you console log `props` you can see it is an object and has one property ca
 {title: "Title from prop"}
 ```
 
-This is what we are passing in when call the component from `src/App.js`.
+This is what we are passing in when we call the component from `src/App.js`.
 
 We can then use `props.title` inside the `h1` tags instead of the local variable we had before.
 
@@ -248,7 +270,9 @@ function Heading(props) {
 }
 ```
 
-Change the values of the of the values you pass in as the props in `App.js` and you will see the browser update the new values displayed.
+Change the values you pass in in `App.js` and you will see the browser update the new values displayed.
+
+
 
 ### destructuring props
 
@@ -269,16 +293,73 @@ function Heading({ title, subtitle }) {
 }
 
 export default Heading;
-
 ```
 
-We place the variables we are looking to use inside curly braces and then we can use them directly without needing to use `props`.
+Inside the function parenthesis `()`, we place the variables we are looking to use inside curly braces and then we can use them directly without needing to use `props`.
 
 
+## prop values other than strings
+
+To pass in values to props other than string values (like numbers, booleans or variables), use curly braces around the values, e.g.:
+
+```jsx
+<SomeComponent age={7} />
+<SomeComponent completed={true} />
+```
+
+To test this, we'll create a component called `Double`. We'll pass in a prop with a `number` value and `boolean` value.
+
+If the boolean value is true, we'll multiply the number value by two and render the result. If it is false, we will just render the value passed in.
+
+Create `src/components/layout/Double.js` and add the following:
+
+```js
+import React from "react";
+
+function Double(props) {
+
+	// set the value of the answer variable to be the value of the number prop
+    let answer = props.number;
+
+	// if the multiply prop is true, times the answer by 2
+    if(props.multiply === true) {
+        answer = props.number * 2;
+    }
+
+	return (
+		<div className="answer">
+			{answer}
+		</div>
+	);
+}
+
+export default Double;
+```
+
+In `src/App.js` import `Double` and pass appropriate props in in the return statement:
+
+```js
+import React from "react";
+import Heading from "./components/layout/Heading";
+import Double from "./components/layout/Double";
+import "./sass/style.scss";
+
+function App() {
+	return (
+		<div className="App">
+			<Heading title="Title from prop" subtitle="Subtitle from prop" />
+
+			<Double number={3} multiply={true} />
+		</div>
+	);
+}
+
+export default App;
+```
 
 ## props.children
 
-If you pass a value inside the opening and closing tags of a component, the value will be available as a proprty called `children`.
+If you pass a value inside the opening and closing tags of a component, the value will be available as a property called `children`.
 
 To demonstrate this, we'll create another component called `Paragraph`. 
 
@@ -298,7 +379,7 @@ function Paragraph(props) {
 export default Paragraph;
 ```
 
-Or using destructurin:
+Or using destructuring:
 
 ```js
 import React from "react";
@@ -320,6 +401,7 @@ In `src/App.js`, import the component and then use it inside the return statemen
 ```js
 import React from "react";
 import Heading from "./components/layout/Heading";
+import Double from "./components/layout/Double";
 import Paragraph from "./components/layout/Paragraph";
 import "./sass/style.scss";
 
@@ -327,6 +409,8 @@ function App() {
 	return (
 		<div className="App">
 			<Heading title="Title from prop" subtitle="Subtitle from prop" />
+
+			<Double number={3} multiply={true} />
 
 			<Paragraph>
 				This will be the children prop inside the component.
@@ -338,7 +422,7 @@ function App() {
 export default App;
 ```
 
-The value `This will be the children prop inside the component.` will be rendered wherever `props.children` is placed inside the component.
+The value `"This will be the children prop inside the component."` will be rendered wherever `props.children` is placed inside the `Paragraph` component.
 
 ### Components as children
 
@@ -381,6 +465,7 @@ Finally, in `src/App.js` import the `Layout` component and wrap the other compon
 ```js
 import React from "react";
 import Heading from "./components/layout/Heading";
+import Double from "./components/layout/Double";
 import Paragraph from "./components/layout/Paragraph";
 import Layout from "./components/layout/Layout";
 import "./sass/style.scss";
@@ -390,7 +475,10 @@ function App() {
 		<Layout>
 			<Heading title="Title from prop" subtitle="Subtitle from prop" />
 
+			<Double number={3} multiply={true} />
+
 			<Paragraph>This will be the children prop inside the component.</Paragraph>
+
 		</Layout>
 	);
 }
@@ -398,40 +486,29 @@ function App() {
 export default App;
 ```
 
+The code added so far can be found on [this branch](https://github.com/javascript-repositories/react-module-1-code/tree/step-2) of the [repo](https://github.com/javascript-repositories/react-module-1-code).
 
-<!-- ---
+
+
 
 ## Practice
 
-Practise creating components by building the following (we won't use your code going forward, this is only for practice):
+Practice creating components by building the following:
 
--   A `Subheading` component that receives a `title` prop and renders the prop's value inside an `h2` tag
--   A `Paragraph` component that receives a `text` prop and renders it inside a `p` element
--   A `Button` component that receives a `label` prop and renders it inside a `button` element
--
+-   A `Subheading` component that receives a `heading` prop and renders the prop's value inside an `h3` tag
+-   A `Button` component that renders its `children` prop between opening and closing button tags.
+- A `Division` component that accepts two props, `firstNumber` and `secondNumber`, divides the first number by the second and outputs the answer inside a div tag.
 
-Create them in separate files inside the layout folder. Import and render them in `App.js`.
+Create them all in separate files in the `src/components/layout` folder, then import and use them in `src/App.js`.
 
-```js
-import React from "react";
-import Heading from "./components/layout/Heading";
-import Subheading from "./components/layout/Subheading";
-import Paragraph from "./components/layout/Paragraph";
-import Button from "./components/layout/Button";
-import "./App.css";
+---
 
-function App() {
-    const title = "Noroff React";
+Code for these components can be found on [this branch](https://github.com/javascript-repositories/react-module-1-code/tree/step-3) of the [repo](https://github.com/javascript-repositories/react-module-1-code).
 
-    return (
-        <div className="App">
-            <Heading title={title} />
-            <Subheading title="This is a sub-heading" />
-            <Paragraph text="This is a paragraph" />
-            <Button label="This is a button" />
-        </div>
-    );
-}
 
-export default App;
-``` -->
+---
+
+[Go to lesson 3](3)
+
+---
+

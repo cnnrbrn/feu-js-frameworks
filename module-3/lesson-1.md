@@ -65,7 +65,7 @@ import "./App.css";
 
 First we import `React` from the package `react`. We need to import `React` any time we use JSX.
 
-Then the `logo` `.svg` file is imported, and finally a `.css` file. Importing a `.css` file like this has the same effect as linking to a CSS file in the head of an HTML page.
+Then the `logo.svg` file is imported, and finally a `.css` file. Importing a `.css` file like this has the same effect as linking to a CSS file in the head of an HTML page.
 
 Next is the `App` function.
 
