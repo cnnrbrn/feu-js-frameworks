@@ -5,11 +5,10 @@ You can use a UI library for the assignment but you can also just use unstyled H
 
 Arrange your components in folders.
 
-You will need to install `react-router-dom`, `react-hook-form` and `yup`.
-
 ## Level 1
 
 - Create a new React app using Create React App. You can call it `react-ma3`.
+- install `react-router-dom`, `react-hook-form` and `yup`
 - Create the following components:
 
 **Heading**
@@ -24,7 +23,7 @@ This will render its `children` prop inside `div` tags.
 
 This should render 3 `li` items with dummy lorem ipsum text inside a `ul`. This component won't receive any props.
 
-**ContactForm**
+**LoginForm**
 
 Use `react-hook-form` and `yup` to create and validate a form with two inputs:
 
@@ -39,14 +38,14 @@ This will import and render the Heading and HomeContent components, sending appr
 
 This will import and render the Heading and NewsList components.
 
-**Contact**
+**Login**
 
-This will import and render the Heading and ContactForm components.
+This will import and render the Heading and LoginForm components.
 
 
 **Layout**
 
-Use React Router to create links to the Home, News and Contact components, using the paths `/`, `/news` and `/contact`.
+Use React Router to create links to the Home, News and Login components, using the paths `/`, `/news` and `/login`.
 
 
 Import and return the Layout component in `src/App.js`.
