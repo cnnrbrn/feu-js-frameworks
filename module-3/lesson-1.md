@@ -153,7 +153,7 @@ Run the following command:
 npm install node-sass
 ```
 
-Once that's installed, change `src/App.css` to `scr/App.scss`, and change the import statement in `src/App.js` from
+Once that's installed, change `src/App.css` to `src/App.scss`, and change the import statement in `src/App.js` from
 
 ```js
 import "./App.css";
