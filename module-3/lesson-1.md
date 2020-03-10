@@ -34,8 +34,6 @@ Open the project in your editor and the above link in your browser.
 
 Open `src/App.js`. This is our first component. It's a function called `App` and it will render on the page whatever we return from it.
 
-
-
 ## JSX
 
 In React, `components` are functions that return what looks like HTML but is actually something called [JSX](https://reactjs.org/docs/introducing-jsx.html). Under the hood it's all JavaScript, and is a way to mix variables and markup to build the output of our component.
@@ -69,7 +67,7 @@ Then the `logo.svg` file is imported, and finally a `.css` file. Importing a `.c
 
 Next is the `App` function.
 
-```js
+```jsx
 function App() {
 	return (
 		<div className="App">
@@ -116,7 +114,7 @@ import App from "./App";
 
 and then renders it inside an element with an id of `root`:
 
-```js
+```jsx
 ReactDOM.render(<App />, document.getElementById('root'));
 ```
 
