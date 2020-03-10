@@ -240,6 +240,9 @@ function Contact() {
 export default Contact;
 ```
 
+The code added so far can be found on [this branch](https://github.com/javascript-repositories/react-module-1-code/tree/step-6) of the [repo](https://github.com/javascript-repositories/react-module-1-code).
+
+
 ## Practice
 
 The form's validation error messages are being displayed in `p` tags. 
@@ -247,6 +250,10 @@ The form's validation error messages are being displayed in `p` tags.
 Create a component called `ErrorMessage` in `src/components/contact/ErrorMessage.js`. Give it a class and style it in `sass/style.scss`.
 
 Import in `Contact.js` and use it instead of the `p` tags.
+
+---
+
+Example code for this can be found on [this branch](https://github.com/javascript-repositories/react-module-1-code/tree/step-7) of the [repo](https://github.com/javascript-repositories/react-module-1-code).
 
 ---
 
