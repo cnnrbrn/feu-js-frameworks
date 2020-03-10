@@ -182,7 +182,7 @@ Test the form and you will see the error messages update in real time.
 
 Final code for the form:
 
-```js
+```jsx
 import React from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
