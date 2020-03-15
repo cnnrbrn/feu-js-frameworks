@@ -1,498 +1,246 @@
-# Lesson 2 - Display an array of results after an API call
+# React 2 Lesson 2 - Displaying an array of results from an API call
 
-There are no new concepts introduced in this lesson.
+In this lesson we will use a hook to make an API call, update the component's state with the data it returns and then loop through this data to create the UI for the component.
 
-Instead, we are going to practise fetching an array of results from an API and creating HTML from the returned data.
+## The first API call
 
----
+Create `src/components/characters/CharacterList.js`.
 
-Check out the [step-21](https://github.com/javascript-repositories/javascript-1-lesson-code/tree/step-21) branch of the [repo](https://github.com/javascript-repositories/javascript-1-lesson-code) to follow this lesson.
+`useState` and `useEffect` are the first hook functions we'll use, so we need to import them from React. We can combine the new imports with the React import on one line.
 
----
-
-If you look at the [RAWG API docs](https://api.rawg.io/docs/), there is an endpoint called `creators` that will return a list of game creators.
-
-The full URL is `https://api.rawg.io/api/creators`.
-
-We'll call that URL using `fetch` and loop through the array of objects that it returns and create HTML elements inside the loop.
-
-> Refer to [Lesson 2 of Module 3](../3/2) for the discussion on `fetch`.
-
-First we'll assign the URL to a variable:
+We'll also import the API URL that we created in the previous lesson.
 
 ```js
-const creatorsUrl = "https://api.rawg.io/api/creators";
+import React, { useState, useEffect } from "react";
+import { BASE_URL } from "../../constants/api";
 ```
 
-Then we'll use that variable in the `fetch` call:
+Add the following code:
 
 ```js
-fetch(creatorsUrl)
-```
+function CharacterList() {
+    useEffect(function() {
+        fetch(BASE_URL)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                console.dir(json);
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }, []);
 
-> We will use regular functions inside the `then` methods. Example code using arrow functions in the `then` and `catch` methods will be provided at the end of the lesson.
-
-We need to provide a function to the `then` method to handle the response from the fetch call.
-
-Previously we sent an anonymous function directly in to the then:
-
-```js
-fetch(creatorsUrl)
-    .then(function(response) {
-        return response.json();
-    })
-```
-
-We could create a named function and use that in the then instead:
-
-```js
-function handleResponse(response) {
-    return response.json();
+    return null;
 }
 
-fetch(creatorsUrl)
-    .then(handleResponse)
+export default CharacterList;
 ```
 
-This will achieve exactly the same result: 
-
-- the function will receive an argument (we've called it `response` because that makes sense, but because it's a normal argument we could call it anything)
-- the `json()` method is called on the response argument. This method turns the response into a `json` object that we can use in our code
-- this `json` object is returned from the function
-- it is this return value that gets sent to the function in the next `then` method
-
-We need to send a function in to the second then.
-
-We can do this with an anonymous function:
+We're going to rewrite the hook using fat arrow functions but you can use whichever syntax your prefer:
 
 ```js
-.then(function(json) {
-    console.log(json);
-})
+useEffect(() => {
+    fetch(BASE_URL)
+        .then(response => response.json())
+        .then(json => console.dir(json))
+        .catch(error => console.log(error));
+}, []);
 ```
 
-Or we can create a named function and send that in:
+The `useEffect` hook allows us to perform "side effects" like API calls in our function component. 
 
-```js
-function handleJson(json) {
-    console.log(json);
+`useEffect` runs every time the component renders, both the first time and after every update. 
+
+Components get re-rendered every time their state changes. We only want the API call to run after the first render, not every time, otherwise we would end up in an endless loop.
+
+The empty array `[]` as the second argument passed to `useEffect` will cause it to run only after the first render.
+
+The full code for `CharacterList` so far:
+
+```jsx
+import React, { useState, useEffect } from "react";
+import { BASE_URL } from "../../constants/api";
+
+function CharacterList() {
+    useEffect(() => {
+        fetch(BASE_URL)
+            .then(response => response.json())
+            .then(json => console.dir(json))
+            .catch(error => console.log(error));
+    }, []);
+
+    return null;
 }
 
-.then(handleJson)
+export default CharacterList;
 ```
 
-So far our code would look one of two ways:
+We are returning `null` at the moment so wherever this component is imported and used there won't be any visual indication, but the console log in the second `then` will still run.
 
-Using anonymous functions:
-
-```js
-fetch(creatorsUrl)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        console.log(json);
-    })
-```
-
-Or using named functions
+In `src/components/home/Home.js` component, import `CharacterList` and render it beneath the heading. We will need to add fragments too and we'll change the title prop in `Heading`.
 
 ```js
-function handleResponse(response) {
-    return response.json();
+import React from 'react';
+import Heading from "../layout/Heading";
+import CharacterList from "../characters/CharacterList";
+
+function Home() {
+    return (
+        <>
+            <Heading title="Rick and Morty" />
+            <CharacterList />
+        </>
+    );
 }
 
-function handleJson(json) {
-    console.dir(json);
-}
-
-fetch(creatorsUrl)
-    .then(handleResponse)
-    .then(handleJson)
+export default Home;
 ```
 
-Any errors that happen during the API call or in the functions we provide to the then methods can be handled in a `catch` block.
+If you look in the console, the call returns a json object with an array of character objects on a property called `results`. We need to store that array in the component's state and then loop through it in our return statement.
 
-For now we'll simply log whatever error gets returned. Again, we can call the argument anything we want - as we can call any argument or any other variable anything we like. Calling it `error` or `errorMessage` is sensible.
+#### useState
 
-Once again we can use an anonymous function:
+The `useState` hook (function) allows us to create properties in the component's state object as well as functions to use to update the properties' values.
+
+Add a `useState` hook above the `useEffect`:
 
 ```js
-.catch(function(error) {
-    console.log(error);
-});
+const [characters, setCharacters] = useState([]);
 ```
 
-Or a named function:
+With this code we are creating a property called `characters` and a function called `setCharacters` that we can use to update that property. The empty array `[]` is the initial value for `characters`.
+
+So we are creating a property called `characters` and a function called `setCharacters` to update the value of `characters`. We give it an initial value of an empty array so that our looping code doesn't break before the `characters` value has been set.
+
+Change the second `then` method to call the `setCharacters` function and pass the results in as an argument:
 
 ```js
-function handleError(error) {
-    console.log(error);
-}
-
-.catch(handleError);
+.then(json => setCharacters(json.results))
 ```
 
-Now the code would look one of these two ways:
+This will store the value of the `json.results` array in the `characters` state property.
+
+We can use `characters` as a normal variable.
+
+The `map` array method loops over an array and creates another array from it. The code below will loop over the `characters` array and create an array of `li` tags using the `id` and `name` properties of the objects inside the `characters` array.
 
 ```js
-fetch(creatorsUrl)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        console.log(json);
-    })
-    .catch(function(error) {
-        console.log(error);
-    });
+return (
+    <ul>
+        {characters.map(character => (
+            <li key={character.id}>{character.name}</li>
+        ))}
+    </ul>
+);
 ```
 
-Or
+Full code:
 
 ```js
-function handleResponse(response) {
-    return response.json();
-}
+export default function CharacterList() {
+    const [characters, setCharacters] = useState([]);
 
-function handleJson(json) {
-    console.dir(json);
-}
+    useEffect(() => {
+        fetch(BASE_URL)
+            .then(response => response.json())
+            .then(json => setCharacters(json.results))
+            .catch(error => console.log(error));
+    }, []);
 
-function handleError(error) {
-    console.log(error);
-}
-
-fetch(creatorsUrl)
-    .then(handleResponse)
-    .then(handleJson)
-    .catch(handleError);
-```
-
-The json object that is received by the function in the second then will contain the data we need to loop through.
-
-It will be neater to handle the loop code oustide of the `then` method. If we are using the named function approach above we can simply add the loop code in to the `handleJson` function.
-
-If we are using the anonymous function approach we can simply call the `handleJson` function and pass in the json.
-
-```js
-fetch(creatorsUrl)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        handleJson(json);
-    })
-    .catch(function(error) {
-        console.log(error);
-    });
-```
-
-Either way, the `handleJson` is where we'll now write the code to loop through the data and create the HTML.
-
-### Looping through the data
-
-The first thing we'll need to do inside `handleJson` is inspect the json to see what is inside:
-
-```js
-function handleJson(json) {
-    console.dir(json);
+    return (
+        <ul>
+            {characters.map(c => (
+                <li key={character.id}>{character.name}</li>
+            ))}
+        </ul>
+    );
 }
 ```
 
-<img src="/images/js1/api-results.png" alt="API results" style="max-width:550px">
+ The `key` attribute is important; you can remove it to see the warning ESLint will display about it being missing.
 
-There is a property called `results` whose value is an array of objects. This is the array we need to loop through.
-
-> You need to inspect the data from an API call to see what you need to retrieve from it. All REST APIs will return JSON, but they will return it differently - you can't assume other APIs will return their data on a property called `results`.
+The home page now displays the first 20 names of the characters returned from the API. Because this call is paginated, we will only ever retrieve the first 20 items. We won't cover paginated calls in the lessons.
 
 
-We'll assign `json.results` to a variable and then loop through it and log each `name` property in the objects.
+### Improving the UI
 
-> Refer to [Programing Foundations Module 2 Lesson 3](https://interactive-content.now.sh/programming-foundations/2/3) for info on looping through arrays of objects using `for loops`
+Let's add a loading spinner while the API call runs. `react-bootstrap` provides one for us:
 
 ```js
-function handleJson(json) {
+import Spinner from "react-bootstrap/Spinner";
+```
 
-    const results = json.results;
+Add a second `useState` hook:
 
-    for (let i = 0; i < results.length; i++) {
-        console.log(results[i].name);
+```js
+const [loading, setLoading] = useState(true);
+```
+
+This gives us a `loading` property and a `setLoading` method to set that property. We're giving `loading` a default property of `true`.
+
+In the `useEffect` hook, add a finally method to set loading to `false`.
+
+```js
+.finally(() => setLoading(false));
+```
+
+The code in the finally block will run whether the call succeeds or fails - either way, loading is done.
+
+So the `loading` property is initially set to `true` and when the API call is done it will be set to `false`.
+
+Above the first return statement, add a second that checks if the `loading` property is true and if so returns the `Spinner` component.
+
+```js
+if (loading) {
+    return <Spinner animation="border" className="spinner" />;
+}
+```
+
+If the loading property is `true` return the `Spinner` component from the function. So before the API call is finished and the code in the finally block is executed, the component will return the `Spinner`.
+
+> You can find the props you can use to change the `Spinner`'s appearance in the [libary's docs](https://react-bootstrap.github.io/components/spinners/).
+
+If `loading` is not true, the `Spinner` won't return and our original return will run.
+
+Full code:
+
+```js
+import React, { useState, useEffect } from "react";
+import Spinner from "react-bootstrap/Spinner";
+import { BASE_URL } from "../../constants/api";
+
+function CharacterList() {
+    const [characters, setCharacters] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch(BASE_URL)
+            .then(response => response.json())
+            .then(json => setCharacters(json.results))
+            .catch(error => console.log(error))
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return <Spinner animation="border" className="spinner" />;
     }
+
+    return (
+        <ul>
+            {characters.map(character => (
+                <li key={character.id}>{character.name}</li>
+            ))}
+        </ul>
+    );
 }
+
+export default CharacterList;
 ```
 
-Let's change the `for loop` to a `forEach` which arguably has a cleaner syntax.
-
-> Refer to [Module 2 Lesson 4](https://interactive-content.now.sh/javascript-1/2/4) for info on forEach
-
-```js
-function handleJson(json) {
-
-    const results = json.results;
-
-    results.forEach(function(result) {
-        console.log(result.name);
-    });
-
-}
-```
-
-In `creators.html` there is placeholder HTML for one card. The background image is a placeholder image.
-
-```html
-<div class="col-sm-6 col-md-4 col-lg-3">
-    <div class="card">
-        <div class="image creator" style="background-image: url('https://via.placeholder.com/250');"></div>
-        <div class="details">
-            <h4 class="name">Name</h4>
-            <p>Game count: 0</p>
-            <a class="btn details" href="creator-detail.html?id=">Details</a>
-        </div>
-    </div>
-</div>
-```
-
-This is the HTML we want to create in a loop for each creator object in the results returned by the API call.
-
-First let's select the element we want to add the HTML to:
-
-```js
-const resultsContainer = document.querySelector(".row.results");
-```
-
-We'll then declare a variable to hold the HTML we create, and then keeping adding HTML to this variable inside the loop:
-
-```js
-let html = "";
-
-results.forEach(function(result) {
-    html += `<div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="card">
-                        <div class="image creator" style="background-image: url('https://via.placeholder.com/250');"></div>
-                        <div class="details">
-                            <h4 class="name">Name</h4>
-                            <p>Game count: 0</p>
-                            <a class="btn details" href="creator-detail.html?id=">Details</a>
-                        </div>
-                    </div>
-                </div>`;
-});
-```
-
-After the loop finishes we'll assign the newly created HTML string to be the `innerHTML` property of `resultsContainer`:
-
-```js
-resultsContainer.innerHTML = html;
-```
-
-Full code for the `handleJson` function so far:
-
-```js
-function handleJson(json) {
-
-    const results = json.results;
-    console.dir(results);    
-
-    const resultsContainer = document.querySelector(".row.results");
-
-    let html = "";
-
-    results.forEach(function(result) {
-        html += `<div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="card">
-                        <div class="image creator" style="background-image: url('https://via.placeholder.com/250');"></div>
-                        <div class="details">
-                            <h4 class="name">Name</h4>
-                            <p>Game count: 0</p>
-                            <a class="btn details" href="creator-detail.html?id=">Details</a>
-                        </div>
-                    </div>
-                </div>`;
-    });
-
-    resultsContainer.innerHTML = html;
-}
-```
-
-Because there 10 objects in the `results` array, 10 cards are now displayed on the page.
-
-<img src="/images/js1/api-results-placeholders.png" alt="API results" style="max-width:700px">
-
-Let's populate the HTML with variables from the `results` objects:
-
-- `result.image` for the background image
-- `result.name` for the name
-- `result.games_count` for the games count
-- `result.id` for the id in the query string of the `Details` link
-
-We'll embed the variables in the string using `${}`.
-
-```js
-results.forEach(function(result) {
-        html += `<div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="card">
-                        <div class="image creator" style="background-image: url('${result.image}');"></div>
-                        <div class="details">
-                            <h4 class="name">${result.name}</h4>
-                            <p>Game count: ${result.games_count}</p>
-                            <a class="btn details" href="creator-detail.html?id=${result.id}">Details</a>
-                        </div>
-                    </div>
-                </div>`;
-    });
-```
-
-Now the cards are populated by real data and images and the Details tag links to a `creator-detail.html` page with an `id` in the query string. We'll create this page in [Lesson 3](3).
-
-The function code so far:
-
-```js
-function handleJson(json) {
-    const results = json.results;
-    console.dir(results);
-
-    const resultsContainer = document.querySelector(".row.results");
-
-    let html = "";
-
-    results.forEach(function(result) {
-        html += `<div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="card">
-                        <div class="image creator" style="background-image: url('${result.image}');"></div>
-                        <div class="details">
-                            <h4 class="name">${result.name}</h4>
-                            <p>Game count: ${result.games_count}</p>
-                            <a class="btn details" href="creator-detail.html?id=${result.id}">Details</a>
-                        </div>
-                    </div>
-                </div>`;
-    });
-
-    resultsContainer.innerHTML = html;
-}
-```
-
-### Providing default values for missing properties
-
-To test providing a default value for a missing property, let's fetch the second page of results from the API call. We can do this by adding a `page` parameter to the query string of the URL and setting its value to `2`.
-
-```js
-const creatorsUrl = "https://api.rawg.io/api/creators?page=2";
-```
-
-If you inspect the JSON returned from this call, you'll see the first object has a missing `image` property, it's set to `null`
-
-```js
-image: null
-```
-
-The card therefore has a missing image.
-
-<img src="/images/js1/api-results-missing-property.png" alt="Missing property" style="max-width:700px">
-
-Inside the loop, we'll create a variable with a placeholder value for the image
-
-```js
-let imageUrl = "https://via.placeholder.com/250";
-```
-
-Then we'll write an `if` statement to check if the `result.image` property is `truthy`. If it is, we'll assign it to the `imageUrl` variable:
-
-```js
-if (result.image) {
-    imageUrl = result.image;
-}
-```
-
-Then inside the HTML we are creating, we will use `imageUrl` for the background image property, not `result.image`:
-
-```js
-<div class="image creator" style="background-image: url('${imageUrl}');"></div>
-```
-
-Now any object that is missing an image property will display the placeholder image instead.
-
-Full code in `js/creators.js`:
-
-```js
-const creatorsUrl = "https://api.rawg.io/api/creators?page=2";
-
-fetch(creatorsUrl)
-    .then(function(response) {
-        return response.json();
-    })
-    .then(function(json) {
-        handleJson(json);
-    })
-    .catch(function(error) {
-        console.log(error);
-    });
-
-function handleJson(json) {
-    const results = json.results;
-    console.dir(results);
-
-    const resultsContainer = document.querySelector(".row.results");
-
-    let html = "";
-
-    results.forEach(function(result) {
-        let imageUrl = "https://via.placeholder.com/250";
-
-        if (result.image) {
-            imageUrl = result.image;
-        }
-
-        html += `<div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="card">
-                        <div class="image creator" style="background-image: url('${imageUrl}');"></div>
-                        <div class="details">
-                            <h4 class="name">${result.name}</h4>
-                            <p>Game count: ${result.games_count}</p>
-                            <a class="btn details" href="creator-detail.html?id=${result.id}">Details</a>
-                        </div>
-                    </div>
-                </div>`;
-    });
-
-    resultsContainer.innerHTML = html;
-}
-```
-
-In `creators.html` we'll replace the example card HTML with the loader div.
-
-```html
-<main class="container content">
-    <div class="row results">
-        <div class="loader"></div>
-    </div>
-</main>
-```
-
-Branch [step-22](https://github.com/javascript-repositories/javascript-1-lesson-code/tree/step-22) of the [repo](https://github.com/javascript-repositories/javascript-1-lesson-code) contains the code so far.
-
---- 
-
-The fetch call using arrow functions would look like this:
-
-```js
-fetch(creatorsUrl)
-    .then(response => return response.json())
-    .then(json => handleJson(json))
-    .catch(error => console.log(error));
-```
-
-> Refer to [Module 3 Lesson 1](https://interactive-content.now.sh/javascript-1/3/1) for a discussion of arrow functions.
+[step-10](https://github.com/javascript-repositories/react-module-1-code/tree/step-10) of the repo contains the code added so far.
 
 ---
-
-## Code improvement practice
-
-Instead of displaying a placeholder image if the `image` property is missing, check if the `result` object has an `image_background` property and display that instead. If both are missing the placeholder image will be displayed. 
-
-You can find the example code for this in [step-23](https://github.com/javascript-repositories/javascript-1-lesson-code/tree/step-23).
-
----
-- [Go to lesson 3](3) 
+[Go to lesson 3](3) 
 ---
