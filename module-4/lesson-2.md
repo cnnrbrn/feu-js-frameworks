@@ -242,5 +242,7 @@ export default CharacterList;
 [step-10](https://github.com/javascript-repositories/react-module-1-code/tree/step-10) of the repo contains the code added so far.
 
 ---
+
 [Go to lesson 3](3) 
+
 ---

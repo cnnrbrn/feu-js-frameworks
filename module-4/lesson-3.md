@@ -575,5 +575,7 @@ CharacterDetail.propTypes = {
 
 
 ---
+
 [Go to lesson 4](4) 
+
 ---

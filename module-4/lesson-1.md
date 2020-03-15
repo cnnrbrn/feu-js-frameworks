@@ -246,5 +246,7 @@ The code for this can be found on [this branch](https://github.com/javascript-re
 
 
 ---
+
 [Go to lesson 2](2) 
+
 --- 
