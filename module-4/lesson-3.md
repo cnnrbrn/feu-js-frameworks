@@ -1,4 +1,4 @@
-# Lesson 3 - Displaying the results of an API call to specific resource
+# Lesson 3 - Displaying the results of an API call to a specific resource
 
 In this lesson we'll style each character result using React Bootstrap components and link from each result to a page that will display details of the character.
 
