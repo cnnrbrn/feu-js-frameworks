@@ -12,7 +12,7 @@ The base URL for the calls will be
 https://api.rawg.io/api/games
 ```
 
-**Only Level 1 is mandatory**
+**Only Level 1 is required, 2 and 3 are optional**
 
 ## Level 1
 
