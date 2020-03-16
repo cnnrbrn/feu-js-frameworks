@@ -54,7 +54,7 @@ Import and return the Layout component in `src/App.js`.
 
 ## Submission
 
-- Create a repository called `your-name-js-frameworks-ma3.js`, e.g. `mary-smith-js-frameworks-ma3.js`. and make sure it's public.
+- Create a repository called `your-name-js-frameworks-ma3.js`, e.g. `mary-smith-js-frameworks-ma3.js` and make sure it's public.
 - Add, commit and push all your code to this repo.
 - Submit the repo link
 
