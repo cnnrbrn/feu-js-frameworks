@@ -12,7 +12,7 @@ The base URL for the calls will be
 https://api.rawg.io/api/games
 ```
 
-
+**Only Level 1 is mandatory**
 
 ## Level 1
 
@@ -34,7 +34,7 @@ Each game should display the following:
 - `Image`
 - `Rating`
 - `Release date`
-- A `button/link` that takes the user to the game details page with the game id in the path (URL)
+- A `button/link` that takes the user to the game details page with the game id in the path (URL).
 
 (Always remember to inspect the results of on API calling using console.log or console.dir to see what the API returns and what properties are available).
 
