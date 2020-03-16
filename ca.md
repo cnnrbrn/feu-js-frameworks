@@ -2,7 +2,7 @@
 
 ## Instructions
 
-You can use either React or Vue of the assignment, and you can use any React or Vue UI library (such as React Boostrap, Material UI or Bootstrap Vue) or write your own styles.
+You can use either React or Vue for the assignment, and you can use any React or Vue UI library (such as React Boostrap, Material UI or Bootstrap Vue) or write your own styles.
 
 We will be using the [RAWG Video Games Database API](https://rawg.io/apidocs) for the assignment.
 
