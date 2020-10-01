@@ -10,7 +10,7 @@
   "license": "ISC",
   "keywords": [],
   "dependencies": {
-    "@actions/core": "^1.2.2",
+    "@actions/core": "^1.2.6",
     "@actions/github": "^2.1.1",
     "algoliasearch": "^4.0.3"
   }
